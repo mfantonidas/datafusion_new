@@ -5,10 +5,16 @@
 #include <qpainter.h>
 #include <qlabel.h>
 #include <qtabwidget.h>
+#include <qtimer.h>
+#include <math.h>
+
 class PixTemp;
 class PixHumi;
 class tabPic;
 class tab1;
+
+static int buffer[200];
+static int buffer2[200];
 
 class DataFusionForm:public DataFusionBaseForm
 {
@@ -44,6 +50,11 @@ public:
   PixHumi *humishow;
   QLabel *temptext;
   QLabel *humitext;
+protected slots:
+  void flushBuff();
+private:
+  QTimer* drawtimer;
+  //int buffer[200];
 };
 
 class PixTemp : public QLabel
@@ -52,8 +63,13 @@ class PixTemp : public QLabel
 public:
 	PixTemp(QWidget *parent = 0);
 	~PixTemp();
+  tab1* parentHandle;
 protected:
 	void paintEvent(QPaintEvent *);
+protected slots:
+//  void flushBuff();
+private:
+//  QFrame *
 };
 
 class PixHumi : public QLabel
@@ -62,6 +78,7 @@ class PixHumi : public QLabel
 public:
 	PixHumi(QWidget *parent = 0);
 	~PixHumi();
+  tab1 *parentHandle;
 protected:
 	void paintEvent(QPaintEvent *);
 };
