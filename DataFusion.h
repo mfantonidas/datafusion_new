@@ -11,7 +11,7 @@
 class PixTemp;
 class PixHumi;
 class tabPic;
-class tab1;
+class tabGraph;
 
 static int buffer[200];
 static int buffer2[200];
@@ -24,7 +24,7 @@ public:
 	~DataFusionForm();
 	int isStart;
   //tabPic *tabpic;
-  tab1 *tabpic;
+  tabGraph *tabpic;
 public slots:
 	virtual void paint(); 
 protected:
@@ -40,12 +40,12 @@ public:
   PixTemp *ppp;
 };*/
 
-class tab1:public QWidget
+class tabGraph:public QWidget
 {
 	Q_OBJECT
 public:
-	tab1(QWidget *parent = 0);
-	~tab1();
+	tabGraph(QWidget *parent = 0);
+	~tabGraph();
   PixTemp *tempshow;
   PixHumi *humishow;
   QLabel *temptext;
@@ -63,7 +63,7 @@ class PixTemp : public QLabel
 public:
 	PixTemp(QWidget *parent = 0);
 	~PixTemp();
-  tab1* parentHandle;
+  	tabGraph* parentHandle;
 protected:
 	void paintEvent(QPaintEvent *);
 protected slots:
@@ -78,7 +78,7 @@ class PixHumi : public QLabel
 public:
 	PixHumi(QWidget *parent = 0);
 	~PixHumi();
-  tab1 *parentHandle;
+  	tabGraph *parentHandle;
 protected:
 	void paintEvent(QPaintEvent *);
 };

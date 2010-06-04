@@ -14,7 +14,7 @@ DataFusionBaseForm(parent, name, fl)
 {
 	isStart = 0;
   //tabpic = new tabPic();
-  tabpic = new tab1();
+  tabpic = new tabGraph();
   TabWidget2->addTab(tabpic, tr("Test"));
 }
 
@@ -49,7 +49,7 @@ tabPic::~tabPic()
 {
 }*/
 
-tab1::tab1(QWidget *parent):
+tabGraph::tabGraph(QWidget *parent):
 QWidget(parent)
 {
   for(int i = 0; i < 200; i++)
@@ -90,11 +90,11 @@ QWidget(parent)
   drawtimer->start(30);
 }
 
-tab1::~tab1()
+tabGraph::~tabGraph()
 {
 }
 
-void tab1::flushBuff()
+void tabGraph::flushBuff()
 {
   int tmp = buffer[0];
 

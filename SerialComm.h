@@ -1,3 +1,6 @@
+#ifndef SERIALCOMM_H
+#define SERIALCOMM_H
+
 #include <stdio.h>
 #include <unistd.h>
 
@@ -11,6 +14,18 @@ struct SensorData{
 	int tempData;
 	int humiData;
 	int state;
+  	int sensorCount;
 };
 
-struct 
+struct SensorNode{
+	int SensorID;
+	struct SensorData *sd;
+	struct SensorNode *next;
+};
+
+extern void sensor_init();
+extern void read_sensor();
+extern void control_sensor();
+extern void check_sensor();
+  
+#endif //SERIALCOMM_H
