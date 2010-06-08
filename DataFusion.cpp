@@ -5,6 +5,7 @@
 #include <qpen.h>
 #include <qpoint.h>
 #include "DataFusion.h"
+#include "TestData.h"
 
 class PixPaint;
 static int count = 0;
@@ -29,26 +30,6 @@ void DataFusionForm::paint()
 	setBackgroundColor( QColor(255, 255, 102) );
 }
 
-/*void DataFusionForm::paintEvent(QPaintEvent *event)
-{
-	//PixmapPainter = new PixPaint;
-	//PixPaint::paintEvent(QPaintEvent *event);
-}*/
-
-/*tabPic::tabPic(QWidget *parent):
-DataFusionBaseForm(parent)
-{
-  ppp = new PixTemp(this);
-  ppp->setGeometry(10, 10, 20, 100);
-  ppp->setPalette( QPalette( QColor(192, 192, 192) ) );
-  ppp->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-
-}
-
-tabPic::~tabPic()
-{
-}*/
-
 tabGraph::tabGraph(QWidget *parent):
 QWidget(parent)
 {
@@ -57,13 +38,9 @@ QWidget(parent)
     buffer[i] = (int)(sin((i*3.14)/100)*60);
   }
 
-  for(int i = 0; i < 101; i++)
+  for(int i = 0; i < 200; i++)
   {
-    buffer2[i] = (int)i*1.7;
-  }
-  for(int i = 101; i < 200; i++)
-  {
-    buffer2[i] = (int)((200 - i));
+    buffer2[i] = 0;
   }
 
   temptext =  new QLabel( this, "temptext" );
@@ -88,15 +65,46 @@ QWidget(parent)
   drawtimer = new QTimer(this, "drawtimer");
   connect(drawtimer, SIGNAL(timeout()), this, SLOT(flushBuff()));
   drawtimer->start(30);
+
+  /*
+   *  Random data for test
+   * */
+  //flushtimer = new QTimer(this, "flushtimer");
+  //connect(flushtimer, SIGNAL(timerout()), this, SLOT(flush_test_buff()));
+  //flushtimer->start(10);
 }
 
 tabGraph::~tabGraph()
 {
 }
 
+void tabGraph::flush_test_buff()
+{
+  //////////
+  unsigned int seed;
+  struct timeval now;
+  float tmp;
+  int rand;
+  int i=0,j;
+  gettimeofday(&now, NULL);
+  seed = now.tv_sec ^ now.tv_usec;
+  for(int i = 0; i < 200; i++)
+  {
+    buffer2[i] = buffer2[i + 1];
+  }
+  tmp = (float)rand_r(&seed)/RAND_MAX*0.9+0.1;
+  rand = (int)((tmp*10));
+  buffer2[199] = rand;
+}
+
 void tabGraph::flushBuff()
 {
   int tmp = buffer[0];
+  unsigned int seed;
+  struct timeval now;
+  float tmp1;
+  int rand;
+  int i=0,j;
 
   for(int i = 0; i < 200; i++)
   {
@@ -104,24 +112,19 @@ void tabGraph::flushBuff()
   }
   buffer[199] = tmp;
 
-  tmp = buffer2[0];
-  for(int j = 0; j < 20; j ++)
+  gettimeofday(&now, NULL);
+  seed = now.tv_sec ^ now.tv_usec;
+  for(int i = 0; i < 200; i++)
   {
-    tmp = buffer2[0];
-    for(int i = 0; i < 200; i++)
-    {
-      buffer2[i] = buffer2[i+1];
-    }
-    buffer2[199] = tmp;
+    buffer2[i] = buffer2[i + 1];
   }
-  tempshow->repaint(0, 0, 270, 120);
+  tmp1 = (float)rand_r(&seed)/RAND_MAX*0.9+0.1;
+  rand = (int)((tmp1*10));
+  buffer2[199] = rand;
 
-  count++;
-  if(count == 17)
-  {
-    count = 0;
-    humishow->repaint(0, 0, 270, 120);
-  }
+  tempshow->repaint(0, 0, 270, 120);
+  humishow->repaint(0, 0, 270, 120);
+  //for(int i = 0; i < 200; i++)
 }
 
 PixTemp::PixTemp(QWidget *parent):

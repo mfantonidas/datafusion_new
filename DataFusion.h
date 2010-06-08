@@ -52,8 +52,14 @@ public:
   QLabel *humitext;
 protected slots:
   void flushBuff();
+
+  void flush_test_buff();//for debug
 private:
   QTimer* drawtimer;
+/*
+ *  Just for debug
+ * */
+  QTimer* flushtimer;
   //int buffer[200];
 };
 
