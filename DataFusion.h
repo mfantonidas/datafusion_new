@@ -13,8 +13,13 @@ class PixHumi;
 class tabPic;
 class tabGraph;
 
-static int buffer[200];
-static int buffer2[200];
+static int tempbuffer1[200];
+static int tempbuffer2[200];
+static int tempbuffer3[200];
+static int humibuffer1[200];
+static int humibuffer2[200];
+static int humibuffer3[200];
+static int isStart;
 
 class DataFusionForm:public DataFusionBaseForm
 {
@@ -22,11 +27,12 @@ class DataFusionForm:public DataFusionBaseForm
 public:
 	DataFusionForm(QWidget *parent = 0, const char *name = 0, WFlags fl = 0);
 	~DataFusionForm();
-	int isStart;
   //tabPic *tabpic;
   tabGraph *tabpic;
 public slots:
-	virtual void paint(); 
+	virtual void paint();
+    virtual void start_catch();
+    virtual void stop_catch();
 protected:
 //	void paintEvent(QPaintEvent *event);
 };

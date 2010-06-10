@@ -13,10 +13,12 @@ static int count = 0;
 DataFusionForm::DataFusionForm(QWidget *parent, const char *name, WFlags fl):
 DataFusionBaseForm(parent, name, fl)
 {
-	isStart = 0;
+    isStart = 0;
   //tabpic = new tabPic();
   tabpic = new tabGraph();
   TabWidget2->addTab(tabpic, tr("Test"));
+  connect(PushButtonStart, SIGNAL(clicked()), this, SLOT(start_catch()));
+  connect(PushButtonStop, SIGNAL(clicked()), this, SLOT(stop_catch()));
 }
 
 DataFusionForm::~DataFusionForm()
@@ -30,17 +32,47 @@ void DataFusionForm::paint()
 	setBackgroundColor( QColor(255, 255, 102) );
 }
 
+void DataFusionForm::start_catch()
+{
+    isStart = 1;
+}
+
+void DataFusionForm::stop_catch()
+{
+    isStart = 0;
+}
+
 tabGraph::tabGraph(QWidget *parent):
 QWidget(parent)
 {
   for(int i = 0; i < 200; i++)
   {
-    buffer[i] = (int)(sin((i*3.14)/100)*60);
+    tempbuffer1[i] = (int)(sin((i*3.14)/100)*60);
+  }
+
+  for (int i = 0; i < 200; ++i)
+  {
+      tempbuffer2[i] = 0;
+  }
+
+  for (int i = 0; i < 200; ++i)
+  {
+      tempbuffer3[i] = 0;
   }
 
   for(int i = 0; i < 200; i++)
   {
-    buffer2[i] = 0;
+    humibuffer1[i] = 0;
+  }
+
+  for(int i = 0; i < 200; ++i)
+  {
+      humibuffer2[i] = 0;
+  }
+
+  for(int i = 0; i < 200; ++i)
+  {
+      humibuffer3[i] = 0;
   }
 
   temptext =  new QLabel( this, "temptext" );
@@ -90,47 +122,49 @@ void tabGraph::flush_test_buff()
   seed = now.tv_sec ^ now.tv_usec;
   for(int i = 0; i < 200; i++)
   {
-    buffer2[i] = buffer2[i + 1];
+    humibuffer2[i] = humibuffer2[i + 1];
   }
   tmp = (float)rand_r(&seed)/RAND_MAX*0.9+0.1;
   rand = (int)((tmp*10));
-  buffer2[199] = rand;
+  humibuffer2[199] = rand;
 }
 
 void tabGraph::flushBuff()
 {
-  int tmp = buffer[0];
+  int tmp = tempbuffer1[0];
   unsigned int seed;
   struct timeval now;
   float tmp1;
   int rand;
   int i=0,j;
 
-  for(int i = 0; i < 200; i++)
-  {
-    buffer[i] = buffer[i+1];
-  }
-  buffer[199] = tmp;
+  if(isStart){
+      for(int i = 0; i < 200; i++)
+      {
+          tempbuffer1[i] = tempbuffer1[i+1];
+      }
+      tempbuffer1[199] = tmp;
 
-  gettimeofday(&now, NULL);
-  seed = now.tv_sec ^ now.tv_usec;
-  for(int i = 0; i < 200; i++)
-  {
-    buffer2[i] = buffer2[i + 1];
-  }
-  tmp1 = (float)rand_r(&seed)/RAND_MAX*0.9+0.1;
-  rand = (int)((tmp1*10));
-  buffer2[199] = rand;
+      gettimeofday(&now, NULL);
+      seed = now.tv_sec ^ now.tv_usec;
+      for(int i = 0; i < 200; i++)
+      {
+          humibuffer1[i] = humibuffer1[i + 1];
+      }
+      tmp1 = (float)rand_r(&seed)/RAND_MAX*0.9+0.1;
+      rand = (int)((tmp1*10));
+      humibuffer1[199] = rand;
 
-  tempshow->repaint(0, 0, 270, 120);
-  humishow->repaint(0, 0, 270, 120);
+      tempshow->repaint(0, 0, 270, 120);
+      humishow->repaint(0, 0, 270, 120);
+  }
   //for(int i = 0; i < 200; i++)
 }
 
 PixTemp::PixTemp(QWidget *parent):
 QLabel(parent)
 {
-  
+
 }
 
 PixTemp::~PixTemp()
@@ -144,13 +178,16 @@ void PixTemp::paintEvent(QPaintEvent *event)
     QPoint beginPoint;
     QPoint endPoint;
     painter.setPen(blue);
-    for(int i = 0; i < 199; i++)
-    {
-      beginPoint.setX(2*i);
-      beginPoint.setY(buffer[i] + 60);
-      endPoint.setX(2*i + 1);
-      endPoint.setY(buffer[i+1] + 60);
-      painter.drawLine(beginPoint, endPoint);
+
+    if(isStart){
+        for(int i = 0; i < 199; i++)
+        {
+            beginPoint.setX(2*i);
+            beginPoint.setY(tempbuffer1[i] + 60);
+            endPoint.setX(2*i + 1);
+            endPoint.setY(tempbuffer1[i+1] + 60);
+            painter.drawLine(beginPoint, endPoint);
+        }
     }
 }
 
@@ -169,12 +206,16 @@ void PixHumi::paintEvent(QPaintEvent *event)
   QPoint beginPoint1;
   QPoint endPoint1;
   painter.setPen(red);
-  for(int i = 0; i < 199; i++)
+
+  if (isStart)
   {
-      beginPoint1.setX(2*i);
-      beginPoint1.setY(buffer2[i] + 12);
-      endPoint1.setX(2*i + 1);
-      endPoint1.setY(buffer2[i+1] + 12);
-      painter.drawLine(beginPoint1, endPoint1);
+      for(int i = 0; i < 199; i++)
+      {
+          beginPoint1.setX(2*i);
+          beginPoint1.setY(humibuffer1[i] + 12);
+          endPoint1.setX(2*i + 1);
+          endPoint1.setY(humibuffer1[i+1] + 12);
+          painter.drawLine(beginPoint1, endPoint1);
+      }
   }
 }
