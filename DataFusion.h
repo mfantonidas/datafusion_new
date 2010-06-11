@@ -7,6 +7,8 @@
 #include <qtabwidget.h>
 #include <qtimer.h>
 #include <math.h>
+#include <qlcdnumber.h>
+#include <qradiobutton.h>
 
 class PixTemp;
 class PixHumi;
@@ -29,10 +31,17 @@ public:
 	~DataFusionForm();
   //tabPic *tabpic;
   tabGraph *tabpic;
+private:
+    QTimer *lcdtimer;
+    int isAuto;
+    int isSingle;
+    virtual void check_radio();
 public slots:
 	virtual void paint();
     virtual void start_catch();
     virtual void stop_catch();
+    virtual void lcd_show();
+    virtual void mode_change();
 protected:
 //	void paintEvent(QPaintEvent *event);
 };
@@ -51,21 +60,22 @@ class tabGraph:public QWidget
 	Q_OBJECT
 public:
 	tabGraph(QWidget *parent = 0);
+    tabGraph(DataFusionForm *parent = 0);
 	~tabGraph();
-  PixTemp *tempshow;
-  PixHumi *humishow;
-  QLabel *temptext;
-  QLabel *humitext;
+    PixTemp *tempshow;
+    PixHumi *humishow;
+    QLabel *temptext;
+    QLabel *humitext;
 protected slots:
-  void flushBuff();
+    void flushBuff();
 
-  void flush_test_buff();//for debug
+    void flush_test_buff();//for debug
 private:
-  QTimer* drawtimer;
+    QTimer* drawtimer;
 /*
  *  Just for debug
  * */
-  QTimer* flushtimer;
+    QTimer* flushtimer;
   //int buffer[200];
 };
 
