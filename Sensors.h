@@ -19,7 +19,7 @@ typedef struct SensorNode{
     struct SensorNode *next;
 }NSensorNode, *PSensorNode;
 
-PSensorNode create_sensor_list();
+void create_sensor_list();
 PSensorNode get_sensor_list();
 char *get_sensor_name(int sensorID, PSensorNode list);
 void set_sensor_stat(int sensorID, PSensorNode list, int stat);

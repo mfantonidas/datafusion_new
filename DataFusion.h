@@ -24,8 +24,6 @@ static int humibuffer1[200];
 static int humibuffer2[200];
 static int humibuffer3[200];
 static int isStart;
-static PSensorNode sensors;
-
 
 class DataFusionForm:public DataFusionBaseForm
 {

@@ -2,7 +2,9 @@
 #include "Sensors.h"
 #include <string.h>
 
-PSensorNode create_sensor_list()
+static PSensorNode psensornode;
+
+void create_sensor_list()
 {
     /*
      *  Test sensors and creating a sensor list
@@ -36,7 +38,13 @@ PSensorNode create_sensor_list()
         nsn = nsn->next;
     }
 
-    return psn;
+    psensornode = psn;
+//    return psn;
+}
+
+PSensorNode get_sensor_list()
+{
+    return psensornode;
 }
 
 char *get_sensor_name(int sensorID, PSensorNode list)

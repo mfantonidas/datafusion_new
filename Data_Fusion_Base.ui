@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>295</width>
+            <width>291</width>
             <height>378</height>
         </rect>
     </property>
@@ -255,102 +255,6 @@
                 <name>title</name>
                 <string>Data</string>
             </attribute>
-            <widget>
-                <class>QLCDNumber</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>LCDNumber5_3</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>90</x>
-                        <y>170</y>
-                        <width>64</width>
-                        <height>23</height>
-                    </rect>
-                </property>
-            </widget>
-            <widget>
-                <class>QLCDNumber</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>LCDNumber5_4</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>160</x>
-                        <y>170</y>
-                        <width>64</width>
-                        <height>23</height>
-                    </rect>
-                </property>
-            </widget>
-            <widget>
-                <class>QLCDNumber</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>LCDNumber5_5</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>230</x>
-                        <y>170</y>
-                        <width>64</width>
-                        <height>23</height>
-                    </rect>
-                </property>
-            </widget>
-            <widget>
-                <class>QLCDNumber</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>LCDNumber5_3_2</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>90</x>
-                        <y>270</y>
-                        <width>64</width>
-                        <height>23</height>
-                    </rect>
-                </property>
-            </widget>
-            <widget>
-                <class>QLCDNumber</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>LCDNumber5_4_2</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>160</x>
-                        <y>270</y>
-                        <width>64</width>
-                        <height>23</height>
-                    </rect>
-                </property>
-            </widget>
-            <widget>
-                <class>QLCDNumber</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>LCDNumber5_5_2</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>230</x>
-                        <y>270</y>
-                        <width>64</width>
-                        <height>23</height>
-                    </rect>
-                </property>
-            </widget>
             <widget>
                 <class>QLabel</class>
                 <property stdset="1">
@@ -729,7 +633,7 @@
                 <class>QLCDNumber</class>
                 <property stdset="1">
                     <name>name</name>
-                    <cstring>LCDNumber2</cstring>
+                    <cstring>LCDNumberST1</cstring>
                 </property>
                 <property stdset="1">
                     <name>geometry</name>
@@ -745,7 +649,7 @@
                 <class>QLCDNumber</class>
                 <property stdset="1">
                     <name>name</name>
-                    <cstring>LCDNumber3</cstring>
+                    <cstring>LCDNumberST2</cstring>
                 </property>
                 <property stdset="1">
                     <name>geometry</name>
@@ -761,29 +665,13 @@
                 <class>QLCDNumber</class>
                 <property stdset="1">
                     <name>name</name>
-                    <cstring>LCDNumber4</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>230</x>
-                        <y>120</y>
-                        <width>64</width>
-                        <height>23</height>
-                    </rect>
-                </property>
-            </widget>
-            <widget>
-                <class>QLCDNumber</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>LCDNumber2_2</cstring>
+                    <cstring>LCDNumberST4</cstring>
                 </property>
                 <property stdset="1">
                     <name>geometry</name>
                     <rect>
                         <x>90</x>
-                        <y>220</y>
+                        <y>170</y>
                         <width>64</width>
                         <height>23</height>
                     </rect>
@@ -793,29 +681,13 @@
                 <class>QLCDNumber</class>
                 <property stdset="1">
                     <name>name</name>
-                    <cstring>LCDNumber3_2</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>160</x>
-                        <y>220</y>
-                        <width>64</width>
-                        <height>23</height>
-                    </rect>
-                </property>
-            </widget>
-            <widget>
-                <class>QLCDNumber</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>LCDNumber4_2</cstring>
+                    <cstring>LCDNumberST3</cstring>
                 </property>
                 <property stdset="1">
                     <name>geometry</name>
                     <rect>
                         <x>230</x>
-                        <y>220</y>
+                        <y>120</y>
                         <width>64</width>
                         <height>23</height>
                     </rect>
@@ -825,7 +697,39 @@
                 <class>QLCDNumber</class>
                 <property stdset="1">
                     <name>name</name>
-                    <cstring>LCDNumber5</cstring>
+                    <cstring>LCDNumberST5</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>160</x>
+                        <y>170</y>
+                        <width>64</width>
+                        <height>23</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget>
+                <class>QLCDNumber</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>LCDNumberST6</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>230</x>
+                        <y>170</y>
+                        <width>64</width>
+                        <height>23</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget>
+                <class>QLCDNumber</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>LCDNumberFT</cstring>
                 </property>
                 <property stdset="1">
                     <name>geometry</name>
@@ -841,7 +745,103 @@
                 <class>QLCDNumber</class>
                 <property stdset="1">
                     <name>name</name>
-                    <cstring>LCDNumber5_6</cstring>
+                    <cstring>LCDNumberSH1</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>90</x>
+                        <y>220</y>
+                        <width>64</width>
+                        <height>23</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget>
+                <class>QLCDNumber</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>LCDNumberSH2</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>160</x>
+                        <y>220</y>
+                        <width>64</width>
+                        <height>23</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget>
+                <class>QLCDNumber</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>LCDNumberSH3</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>230</x>
+                        <y>220</y>
+                        <width>64</width>
+                        <height>23</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget>
+                <class>QLCDNumber</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>LCDNumberSH4</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>90</x>
+                        <y>270</y>
+                        <width>64</width>
+                        <height>23</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget>
+                <class>QLCDNumber</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>LCDNumberSH5</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>160</x>
+                        <y>270</y>
+                        <width>64</width>
+                        <height>23</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget>
+                <class>QLCDNumber</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>LCDNumberSH6</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>230</x>
+                        <y>270</y>
+                        <width>64</width>
+                        <height>23</height>
+                    </rect>
+                </property>
+            </widget>
+            <widget>
+                <class>QLCDNumber</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>LCDNumberFH</cstring>
                 </property>
                 <property stdset="1">
                     <name>geometry</name>
