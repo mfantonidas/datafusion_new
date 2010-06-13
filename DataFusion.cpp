@@ -14,6 +14,8 @@ DataFusionForm::DataFusionForm(QWidget *parent, const char *name, WFlags fl):
 DataFusionBaseForm(parent, name, fl)
 {
     isStart = 0;
+    isAbnormal = 0;
+
     //tabpic = new tabPic();
     tabpic = new tabGraph(this);
     TabWidget2->addTab(tabpic, tr("Test"));
@@ -23,18 +25,36 @@ DataFusionBaseForm(parent, name, fl)
     connect(lcdtimer, SIGNAL(timeout()), this, SLOT(lcd_show()));
     connect(RadioButtonAuto, SIGNAL(clicked()), this, SLOT(mode_change()));
     connect(RadioButtonManual, SIGNAL(clicked()), this, SLOT(mode_change()));
+
+    sensors = create_sensor_list();
+
+    s = sensors;
+
+
+    for(s; s!=0; )
+    {
+        if (s->node->isEnabled == 1)
+        {
+            ListBoxSensors->insertItem(QString(s->node->name));
+
+        }
+        s = s->next;
+    }
+
     //lcdtimer->start(200);
 }
 
 DataFusionForm::~DataFusionForm()
 {
-	isStart = 0;
+    isStart = 0;
+    del_sensor_list(&sensors);
+    s = NULL;
 }
 
 void DataFusionForm::paint()
 {
-	isStart = 1;
-	setBackgroundColor( QColor(255, 255, 102) );
+    isStart = 1;
+    setBackgroundColor( QColor(255, 255, 102) );
 }
 
 void DataFusionForm::start_catch()

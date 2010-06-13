@@ -11,7 +11,7 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>299</width>
+            <width>295</width>
             <height>378</height>
         </rect>
     </property>
@@ -213,10 +213,10 @@
                 <property stdset="1">
                     <name>geometry</name>
                     <rect>
-                        <x>108</x>
-                        <y>25</y>
+                        <x>10</x>
+                        <y>21</y>
                         <width>161</width>
-                        <height>141</height>
+                        <height>150</height>
                     </rect>
                 </property>
                 <property stdset="1">
@@ -226,6 +226,22 @@
                 <property stdset="1">
                     <name>scaledContents</name>
                     <bool>true</bool>
+                </property>
+            </widget>
+            <widget>
+                <class>QListBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>ListBoxSensors</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>180</x>
+                        <y>20</y>
+                        <width>96</width>
+                        <height>150</height>
+                    </rect>
                 </property>
             </widget>
         </widget>
