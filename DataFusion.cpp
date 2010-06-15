@@ -44,7 +44,8 @@ DataFusionBaseForm(parent, name, fl)
 DataFusionForm::~DataFusionForm()
 {
     isStart = 0;
-    del_sensor_list(&sensors);
+    s = get_sensor_list();
+    del_sensor_list(&s);
     s = NULL;
 }
 
@@ -284,10 +285,16 @@ void tabGraph::flushBuff()
     float tmp1;
     int rand;
     int i=0,j;
+    PSensorNode psn;
+    int enableS[3] = {0, 0, 0};
 
     if(isStart){
-
-
+        psn = get_sensor_list();
+        for(psn; psn != 0;)
+        {
+            enableS[psn->node->sensorID] = psn->node->isEnabled;
+            psn = psn->next;
+        }
         //for test
 
         for(int i = 0; i < 200; i++)
@@ -338,31 +345,48 @@ void PixTemp::paintEvent(QPaintEvent *event)
     QPoint endPointS3;
     QPoint beginPointF;
     QPoint endPointF;
+    PSensorNode psn;
+    int enableS[3] = {0, 0, 0};
 
     painterS1.setPen(blue);
     painterS2.setPen(red);
     painterS3.setPen(yellow);
     painterF.setPen(black);
 
+    psn = get_sensor_list();
+    for(psn; psn!=0;)
+    {
+        enableS[psn->node->sensorID] = psn->node->isEnabled;
+        psn = psn->next;
+    }
+
     for(int i = 0; i < 199; i++)
     {
-        beginPointS1.setX(2*i);
-        beginPointS1.setY(tempbuffer1[i] + 60);
-        endPointS1.setX(2*i + 1);
-        endPointS1.setY(tempbuffer1[i+1] + 60);
-        painterS1.drawLine(beginPointS1, endPointS1);
+        if(enableS[0]){
+            beginPointS1.setX(2*i);
+            beginPointS1.setY(tempbuffer1[i] + 60);
+            endPointS1.setX(2*i + 1);
+            endPointS1.setY(tempbuffer1[i+1] + 60);
+            painterS1.drawLine(beginPointS1, endPointS1);
+        }
 
-        beginPointS2.setX(2*i);
-        beginPointS2.setY(tempbuffer2[i] + 60);
-        endPointS2.setX(2*i + 1);
-        endPointS2.setY(tempbuffer2[i+1] + 60);
-        painterS2.drawLine(beginPointS2, endPointS2);
+        if (enableS[1])
+        {
+            beginPointS2.setX(2*i);
+            beginPointS2.setY(tempbuffer2[i] + 60);
+            endPointS2.setX(2*i + 1);
+            endPointS2.setY(tempbuffer2[i+1] + 60);
+            painterS2.drawLine(beginPointS2, endPointS2);
+        }
 
-        beginPointS3.setX(2*i);
-        beginPointS3.setY(tempbuffer3[i] + 60);
-        endPointS3.setX(2*i + 1);
-        endPointS3.setY(tempbuffer3[i+1] + 60);
-        painterS3.drawLine(beginPointS3, endPointS3);
+        if (enableS[2])
+        {
+            beginPointS3.setX(2*i);
+            beginPointS3.setY(tempbuffer3[i] + 60);
+            endPointS3.setX(2*i + 1);
+            endPointS3.setY(tempbuffer3[i+1] + 60);
+            painterS3.drawLine(beginPointS3, endPointS3);
+        }
 
         beginPointF.setX(2*i);
         beginPointF.setY(tempbuffer1[i] + 60);
@@ -396,31 +420,49 @@ void PixHumi::paintEvent(QPaintEvent *event)
     QPoint endPointS3;
     QPoint beginPointF;
     QPoint endPointF;
+    PSensorNode pn;
+    int enableS[3] = { 0, 0, 0,};
 
     painterS1.setPen(blue);
     painterS2.setPen(red);
     painterS3.setPen(yellow);
     painterF.setPen(black);
 
+    pn = get_sensor_list();
+    for(pn; pn!=0;)
+    {
+        enableS[pn->node->sensorID] = pn->node->isEnabled;
+        pn = pn->next;
+    }
+
     for(int i = 0; i < 199; i++)
     {
-        beginPointS1.setX(2*i);
-        beginPointS1.setY(humibuffer1[i] + 12);
-        endPointS1.setX(2*i + 1);
-        endPointS1.setY(humibuffer1[i+1] + 12);
-        painterS1.drawLine(beginPointS1, endPointS1);
+        if(enableS[0])
+        {
+            beginPointS1.setX(2*i);
+            beginPointS1.setY(humibuffer1[i] + 12);
+            endPointS1.setX(2*i + 1);
+            endPointS1.setY(humibuffer1[i+1] + 12);
+            painterS1.drawLine(beginPointS1, endPointS1);
+        }
 
-        beginPointS2.setX(2*i);
-        beginPointS2.setY(humibuffer2[i] + 12);
-        endPointS2.setX(2*i + 1);
-        endPointS2.setY(humibuffer2[i+1] + 12);
-        painterS2.drawLine(beginPointS2, endPointS2);
+        if (enableS[1])
+        {
+            beginPointS2.setX(2*i);
+            beginPointS2.setY(humibuffer2[i] + 12);
+            endPointS2.setX(2*i + 1);
+            endPointS2.setY(humibuffer2[i+1] + 12);
+            painterS2.drawLine(beginPointS2, endPointS2);
+        }
 
-        beginPointS3.setX(2*i);
-        beginPointS3.setY(humibuffer3[i] + 12);
-        endPointS3.setX(2*i + 1);
-        endPointS3.setY(humibuffer3[i+1] + 12);
-        painterS3.drawLine(beginPointS3, endPointS3);
+        if (enableS[2])
+        {
+            beginPointS3.setX(2*i);
+            beginPointS3.setY(humibuffer3[i] + 12);
+            endPointS3.setX(2*i + 1);
+            endPointS3.setY(humibuffer3[i+1] + 12);
+            painterS3.drawLine(beginPointS3, endPointS3);
+        }
 
         beginPointF.setX(2*i);
         beginPointF.setY(humibuffer1[i] + 12);
