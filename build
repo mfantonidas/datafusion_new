@@ -1,7 +1,8 @@
 #!/bin/bash
 
-source /micro2440/x86-qtopia/qtopia-2.2.0-FriendlyARM/setQpeEnv 
-qmake -o Makefile -spec /micro2440/x86-qtopia/qtopia-2.2.0-FriendlyARM/qtopia/mkspecs/qws/linux-generic-g++ *.pro 
+source /opt/FriendlyARM/Micro2440/x86-qtopia/qtopia-2.2.0-FriendlyARM/setQpeEnv 
+
+qmake -o Makefile -spec /opt/FriendlyARM/Micro2440/x86-qtopia/qtopia-2.2.0-FriendlyARM/qtopia/mkspecs/qws/linux-generic-g++ *.pro 
 
 make clean
 make

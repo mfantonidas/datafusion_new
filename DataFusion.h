@@ -11,6 +11,7 @@
 #include <qradiobutton.h>
 #include <qlistbox.h>
 #include "Sensors.h"
+#include <stdlib.h>
 
 class PixTemp;
 class PixHumi;

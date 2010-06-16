@@ -6,6 +6,8 @@
 #include <qpoint.h>
 #include "DataFusion.h"
 #include "TestData.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 class PixPaint;
 static int count = 0;
@@ -15,6 +17,7 @@ DataFusionBaseForm(parent, name, fl)
 {
     isStart = 0;
     isAbnormal = 0;
+    char buffer[5];
 
     //tabpic = new tabPic();
     tabpic = new tabGraph(this);
@@ -25,6 +28,8 @@ DataFusionBaseForm(parent, name, fl)
     connect(lcdtimer, SIGNAL(timeout()), this, SLOT(lcd_show()));
     connect(RadioButtonAuto, SIGNAL(clicked()), this, SLOT(mode_change()));
     connect(RadioButtonManual, SIGNAL(clicked()), this, SLOT(mode_change()));
+    connect(RadioButtonOne, SIGNAL(clicked()), this, SLOT(mode_change()));
+    connect(RadioButtonMany, SIGNAL(clicked()), this, SLOT(mode_change()));
 
     create_sensor_list();
     s = get_sensor_list();
@@ -33,11 +38,11 @@ DataFusionBaseForm(parent, name, fl)
     {
         if (s->node->isEnabled == 1)
         {
-            ListBoxSensors->insertItem(QString(s->node->name));
+            itoa(s->node->sensorID, buffer);
+            ListBoxSensors->insertItem(QString(s->node->name)+QString(buffer));
         }
         s = s->next;
     }
-
     //lcdtimer->start(200);
 }
 
@@ -90,12 +95,18 @@ void DataFusionForm::mode_change()
     {
         RadioButtonOne->setDisabled(true);
         RadioButtonMany->setDisabled(true);
+        PushButtonChooseS->setDisabled(true);
     }
-    else
+    else if(RadioButtonManual->isChecked())
     {
         RadioButtonOne->setEnabled(true);
         RadioButtonMany->setEnabled(true);
     }
+
+    if (RadioButtonOne->isChecked())
+        PushButtonChooseS->setEnabled(true);
+    else if(RadioButtonMany->isChecked())
+        PushButtonChooseS->setDisabled(true);
 }
 
 void DataFusionForm::lcd_show()

@@ -23,7 +23,7 @@ void create_sensor_list()
         aSensor->isEnabled = 1;
         aSensor->isUsing = 0;
         aSensor->sensorID = i;
-        aSensor->name = "a sensor";
+        aSensor->name = "sensor";
 
         nsn = (NSensorNode *)malloc(sizeof(NSensorNode));
         nsn->node = aSensor;
@@ -159,4 +159,19 @@ void del_sensor_list(PSensorNode *list)
     psn = NULL;
     nsn = NULL;
     ns = NULL;
+}
+
+void itoa(int i, char *string)
+{
+    int power, j;
+
+    j = i;
+    for(power = 1; j >= 10; j /= 10)
+        power *= 10;
+    for(; power > 0; power /= 10)
+    {
+        *string ++ = '0' + i/power;
+        i %= power;
+    }
+    *string = '\0';
 }

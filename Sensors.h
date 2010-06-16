@@ -27,5 +27,6 @@ int get_sensor_stat(int sensorID, PSensorNode list);
 void set_sensor_mode(int sensorID, PSensorNode list, int mode);
 int get_sensor_mode(int sensorID, PSensorNode list);
 void del_sensor_list(PSensorNode *list);
+void itoa(int i, char *string);
 
 #endif //SENSORS_H
