@@ -20,7 +20,7 @@ void create_sensor_list()
     {
         aSensor = (NSensor *)malloc(sizeof(NSensor));
         aSensor->name = (char *)malloc(sizeof(char)*20);
-        aSensor->isEnabled = 1;
+        aSensor->isEnabled = 1;//
         aSensor->isUsing = 0;
         aSensor->sensorID = i;
         aSensor->name = "sensor";

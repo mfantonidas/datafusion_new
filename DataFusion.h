@@ -39,6 +39,8 @@ private:
     int isAuto;
     int isSingle;
     int isAbnormal;
+    int singleSensor[];
+
     PSensorNode s;
 
     virtual void check_radio();
@@ -48,6 +50,8 @@ public slots:
     virtual void stop_catch();
     virtual void lcd_show();
     virtual void mode_change();
+    virtual void sensor_choose_ok();
+
 protected:
 //  void paintEvent(QPaintEvent *event);
 };

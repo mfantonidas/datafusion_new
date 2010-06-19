@@ -17,7 +17,12 @@ DataFusionBaseForm(parent, name, fl)
 {
     isStart = 0;
     isAbnormal = 0;
+    singleSensor[0] = 0;
+    singleSensor[1] = 0;
+    singleSensor[2] = 0;
+
     char buffer[5];
+    QString qs;
 
     //tabpic = new tabPic();
     tabpic = new tabGraph(this);
@@ -30,7 +35,9 @@ DataFusionBaseForm(parent, name, fl)
     connect(RadioButtonManual, SIGNAL(clicked()), this, SLOT(mode_change()));
     connect(RadioButtonOne, SIGNAL(clicked()), this, SLOT(mode_change()));
     connect(RadioButtonMany, SIGNAL(clicked()), this, SLOT(mode_change()));
+    connect(PushButtonChooseS, SIGNAL(clicked()), this, SLOT(sensor_choose_ok()));
 
+    PushButtonChooseS->setDisabled(true);
     create_sensor_list();
     s = get_sensor_list();
 
@@ -40,6 +47,7 @@ DataFusionBaseForm(parent, name, fl)
         {
             itoa(s->node->sensorID, buffer);
             ListBoxSensors->insertItem(QString(s->node->name)+QString(buffer));
+            qs = ListBoxSensors->text(s->node->sensorID);
         }
         s = s->next;
     }
@@ -101,12 +109,13 @@ void DataFusionForm::mode_change()
     {
         RadioButtonOne->setEnabled(true);
         RadioButtonMany->setEnabled(true);
+
+        if (RadioButtonOne->isChecked())
+            PushButtonChooseS->setEnabled(true);
+        else if(RadioButtonMany->isChecked())
+            PushButtonChooseS->setDisabled(true);
     }
 
-    if (RadioButtonOne->isChecked())
-        PushButtonChooseS->setEnabled(true);
-    else if(RadioButtonMany->isChecked())
-        PushButtonChooseS->setDisabled(true);
 }
 
 void DataFusionForm::lcd_show()
@@ -134,6 +143,27 @@ void DataFusionForm::lcd_show()
         LCDNumber3_2->display(0);
         LCDNumber4_2->display(0);
         LCDNumber5_6->display(0);*/
+    }
+}
+
+void DataFusionForm::sensor_choose_ok()
+{
+    QString qs;
+    char buf[5];
+    int i, counts;
+
+    qs = ListBoxSensors->currentText();
+    counts = ListBoxSensors->count();
+
+    for (i = 0; i < counts; ++i)
+    {
+        itoa(i, buf);
+        if(qs == (QString("sensor") + QString(buf)))
+        {
+            singleSensor[i] = 1;
+            TextLabelSingleS->setText(QString("sensor") + QString(buf));
+            break;
+        }
     }
 }
 
@@ -300,6 +330,7 @@ void tabGraph::flushBuff()
     int enableS[3] = {0, 0, 0};
 
     if(isStart){
+
         psn = get_sensor_list();
         for(psn; psn != 0;)
         {
