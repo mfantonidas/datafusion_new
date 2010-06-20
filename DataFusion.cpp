@@ -57,9 +57,7 @@ DataFusionBaseForm(parent, name, fl)
 DataFusionForm::~DataFusionForm()
 {
     isStart = 0;
-    s = get_sensor_list();
-    del_sensor_list(&s);
-    s = NULL;
+    del_sensor_list();
 }
 
 void DataFusionForm::paint()
@@ -120,17 +118,41 @@ void DataFusionForm::mode_change()
 
 void DataFusionForm::lcd_show()
 {
-    if (isStart)
-    {
-        LCDNumberST1->display(tempbuffer1[199]);
-        LCDNumberST2->display(tempbuffer2[199]);
-        LCDNumberST3->display(tempbuffer3[199]);
-        LCDNumberFT->display(tempbuffer1[199]);
+    PSensorNode psn = NULL;
+    int enableS[] = {0, 0, 0};
 
-        LCDNumberSH1->display(humibuffer1[199]);
-        LCDNumberSH2->display(humibuffer2[199]);
-        LCDNumberSH3->display(humibuffer3[199]);
-        LCDNumberFH->display(humibuffer1[199]);
+    /*if (isStart)
+    {
+        psn = get_sensor_list();
+        for(psn; psn != 0;)
+        {
+            enableS[psn->node->sensorID] = psn->node->isEnabled;
+            psn = psn->next;
+        }
+
+        if (enableS[0])
+        {
+            LCDNumberST1->display(tempbuffer1[199]);
+            LCDNumberSH1->display(humibuffer1[199]);
+        }
+
+        if (enableS[1])
+        {
+            LCDNumberST2->display(tempbuffer2[199]);
+            LCDNumberSH2->display(humibuffer2[199]);
+        }
+
+        if (enableS[2])
+        {
+            LCDNumberST3->display(tempbuffer3[199]);
+            LCDNumberSH3->display(humibuffer3[199]);
+        }
+
+        if (enableS[0] | enableS[1] | enableS[2])
+        {
+            LCDNumberFT->display(tempbuffer1[199]);
+            LCDNumberFH->display(humibuffer1[199]);
+        }
     }
     else
     {
@@ -142,8 +164,8 @@ void DataFusionForm::lcd_show()
         LCDNumber2_2->display(0);
         LCDNumber3_2->display(0);
         LCDNumber4_2->display(0);
-        LCDNumber5_6->display(0);*/
-    }
+        LCDNumber5_6->display(0);
+        }*/
 }
 
 void DataFusionForm::sensor_choose_ok()
@@ -342,25 +364,74 @@ void tabGraph::flushBuff()
         }
         //for test
 
-        for(int i = 0; i < 200; i++)
+        if(enableS[0])
         {
-            tempbuffer1[i] = tempbuffer1[i+1];
-        }
-        tempbuffer1[199] = tmp;
+            for(int i = 0; i < 200; i++)
+            {
+                tempbuffer1[i] = tempbuffer1[i+1];
+            }
+            tempbuffer1[199] = tmp;
 
-        gettimeofday(&now, NULL);
-        seed = now.tv_sec ^ now.tv_usec;
-        for(int i = 0; i < 200; i++)
-        {
-            humibuffer1[i] = humibuffer1[i + 1];
+            gettimeofday(&now, NULL);
+            seed = now.tv_sec ^ now.tv_usec;
+            for(int i = 0; i < 200; i++)
+            {
+                humibuffer1[i] = humibuffer1[i + 1];
+            }
+            tmp1 = (float)rand_r(&seed)/RAND_MAX*0.9+0.1;
+            rand = (int)((tmp1*10));
+            humibuffer1[199] = rand;
         }
-        tmp1 = (float)rand_r(&seed)/RAND_MAX*0.9+0.1;
-        rand = (int)((tmp1*10));
-        humibuffer1[199] = rand;
+
+        if (enableS[1])
+        {
+            gettimeofday(&now, NULL);
+            seed = now.tv_sec ^ now.tv_usec;
+            for(int i = 0; i < 200; i++)
+            {
+                tempbuffer2[i] = tempbuffer2[i + 1];
+            }
+            tmp1 = (float)rand_r(&seed)/RAND_MAX*0.9+0.1;
+            rand = (int)((tmp1*10));
+            tempbuffer2[199] = rand;
+
+            gettimeofday(&now, NULL);
+            seed = now.tv_sec ^ now.tv_usec;
+            for(int i = 0; i < 200; i++)
+            {
+                humibuffer2[i] = humibuffer2[i + 1];
+            }
+            tmp1 = (float)rand_r(&seed)/RAND_MAX*0.9+0.1;
+            rand = (int)((tmp1*10));
+            humibuffer2[199] = rand;
+        }
+
+        if (enableS[2])
+        {
+            gettimeofday(&now, NULL);
+            seed = now.tv_sec ^ now.tv_usec;
+            for(int i = 0; i < 200; i++)
+            {
+                tempbuffer3[i] = tempbuffer3[i + 1];
+            }
+            tmp1 = (float)rand_r(&seed)/RAND_MAX*0.9+0.1;
+            rand = (int)((tmp1*10));
+            tempbuffer3[199] = rand;
+
+            gettimeofday(&now, NULL);
+            seed = now.tv_sec ^ now.tv_usec;
+            for(int i = 0; i < 200; i++)
+            {
+                humibuffer3[i] = humibuffer3[i + 1];
+            }
+            tmp1 = (float)rand_r(&seed)/RAND_MAX*0.9+0.1;
+            rand = (int)((tmp1*10));
+            humibuffer3[199] = rand;
+        }
     }
 
-        tempshow->repaint(0, 0, 270, 120);
-        humishow->repaint(0, 0, 270, 120);
+    tempshow->repaint(0, 0, 270, 120);
+    humishow->repaint(0, 0, 270, 120);
 
     //for(int i = 0; i < 200; i++)
 }

@@ -19,7 +19,7 @@ void create_sensor_list()
     for(i = 0; i < 3; ++i)
     {
         aSensor = (NSensor *)malloc(sizeof(NSensor));
-        aSensor->name = (char *)malloc(sizeof(char)*20);
+//        aSensor->name = (char *)malloc(sizeof(char)*20);
         aSensor->isEnabled = 0;
         aSensor->avalible = 1;
         aSensor->isUsing = 0;
@@ -153,7 +153,7 @@ int get_sensor_mode(int sensorID, PSensorNode list)
     return NULL;
 }
 
-void del_sensor_list(PSensorNode *list)
+/*void del_sensor_list(PSensorNode *list)
 {
     NSensorNode *nsn;
     PSensorNode psn;
@@ -164,14 +164,30 @@ void del_sensor_list(PSensorNode *list)
     {
         nsn = psn;
         ns = nsn->node;
-        if(ns)
+//        if(ns)
+//        {
             free(ns);
+//        }
         psn = psn->next;
         free(nsn);
     }
-    psn = NULL;
-    nsn = NULL;
-    ns = NULL;
+    }*/
+
+void del_sensor_list()
+{
+    NSensorNode *nsn = NULL;
+    NSensor *ns = NULL;
+
+    while(psensornode)
+    {
+        nsn = psensornode;
+        ns = nsn->node;
+        free(ns);
+        ns = NULL;
+        psensornode = psensornode->next;
+        free(nsn);
+        nsn = NULL;
+    }
 }
 
 void itoa(int i, char *string)
