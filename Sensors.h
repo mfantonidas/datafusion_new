@@ -9,6 +9,7 @@
 typedef struct Sensor{
     int isEnabled;
     int isUsing;
+    int avalible;
     int sensorID;
     char *name;
     float catchData[];
@@ -22,9 +23,10 @@ typedef struct SensorNode{
 void create_sensor_list();
 PSensorNode get_sensor_list();
 char *get_sensor_name(int sensorID, PSensorNode list);
-void set_sensor_stat(int sensorID, PSensorNode list, int stat);
+void set_sensor_stat(int sensorID, PSensorNode *list, int stat);
 int get_sensor_stat(int sensorID, PSensorNode list);
-void set_sensor_mode(int sensorID, PSensorNode list, int mode);
+void init_sensor_stat(PSensorNode *list);
+void set_sensor_mode(int sensorID, PSensorNode *list, int mode);
 int get_sensor_mode(int sensorID, PSensorNode list);
 void del_sensor_list(PSensorNode *list);
 void itoa(int i, char *string);

@@ -43,7 +43,7 @@ DataFusionBaseForm(parent, name, fl)
 
     for(s; s!=0; )
     {
-        if (s->node->isEnabled == 1)
+        if (s->node->avalible == 1)
         {
             itoa(s->node->sensorID, buffer);
             ListBoxSensors->insertItem(QString(s->node->name)+QString(buffer));
@@ -151,16 +151,20 @@ void DataFusionForm::sensor_choose_ok()
     QString qs;
     char buf[5];
     int i, counts;
+    PSensorNode psn;
 
+    psn = get_sensor_list();
     qs = ListBoxSensors->currentText();
     counts = ListBoxSensors->count();
 
     for (i = 0; i < counts; ++i)
     {
         itoa(i, buf);
+        init_sensor_stat(&psn);
         if(qs == (QString("sensor") + QString(buf)))
         {
             singleSensor[i] = 1;
+            set_sensor_stat(i, &psn, 1);
             TextLabelSingleS->setText(QString("sensor") + QString(buf));
             break;
         }
@@ -208,7 +212,6 @@ QWidget(parent)
     tempshow->setGeometry( QRect(10, 30, 270, 120) );
     tempshow->setPalette( QPalette( QColor(192, 192, 192) ) );
     tempshow->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-
 
     humitext =  new QLabel( this, "humitext" );
     humitext->setGeometry( QRect(10, 160, 70, 10) );
@@ -424,17 +427,19 @@ void PixTemp::paintEvent(QPaintEvent *event)
         if (enableS[2])
         {
             beginPointS3.setX(2*i);
-            beginPointS3.setY(tempbuffer3[i] + 60);
+            beginPointS3.setY(tempbuffer3[i] + 70);
             endPointS3.setX(2*i + 1);
-            endPointS3.setY(tempbuffer3[i+1] + 60);
+            endPointS3.setY(tempbuffer3[i+1] + 70);
             painterS3.drawLine(beginPointS3, endPointS3);
         }
-
-        beginPointF.setX(2*i);
-        beginPointF.setY(tempbuffer1[i] + 60);
-        endPointF.setX(2*i + 1);
-        endPointF.setY(tempbuffer1[i+1] + 60);
-        painterF.drawLine(beginPointF, endPointF);
+        if(enableS[0] | enableS[1] | enableS[2])
+        {
+            beginPointF.setX(2*i);
+            beginPointF.setY(tempbuffer1[i] + 60);
+            endPointF.setX(2*i + 1);
+            endPointF.setY(tempbuffer1[i+1] + 60);
+            painterF.drawLine(beginPointF, endPointF);
+        }
 
     }
 }
@@ -500,16 +505,19 @@ void PixHumi::paintEvent(QPaintEvent *event)
         if (enableS[2])
         {
             beginPointS3.setX(2*i);
-            beginPointS3.setY(humibuffer3[i] + 12);
+            beginPointS3.setY(humibuffer3[i] + 20);
             endPointS3.setX(2*i + 1);
-            endPointS3.setY(humibuffer3[i+1] + 12);
+            endPointS3.setY(humibuffer3[i+1] + 20);
             painterS3.drawLine(beginPointS3, endPointS3);
         }
 
-        beginPointF.setX(2*i);
-        beginPointF.setY(humibuffer1[i] + 12);
-        endPointF.setX(2*i + 1);
-        endPointF.setY(humibuffer1[i+1] + 12);
-        painterF.drawLine(beginPointF, endPointF);
+        if(enableS[0] | enableS[1] | enableS[2])
+        {
+            beginPointF.setX(2*i);
+            beginPointF.setY(humibuffer1[i] + 12);
+            endPointF.setX(2*i + 1);
+            endPointF.setY(humibuffer1[i+1] + 12);
+            painterF.drawLine(beginPointF, endPointF);
+        }
     }
 }

@@ -20,7 +20,8 @@ void create_sensor_list()
     {
         aSensor = (NSensor *)malloc(sizeof(NSensor));
         aSensor->name = (char *)malloc(sizeof(char)*20);
-        aSensor->isEnabled = 1;//
+        aSensor->isEnabled = 0;
+        aSensor->avalible = 1;
         aSensor->isUsing = 0;
         aSensor->sensorID = i;
         aSensor->name = "sensor";
@@ -101,6 +102,18 @@ int get_sensor_stat(int sensorID, PSensorNode list)
         nsn = nsn->next;
     }
     return NULL;
+}
+
+void init_sensor_stat(PSensorNode *list)
+{
+    NSensorNode *nsn;
+
+    nsn = *list;
+    while(nsn)
+    {
+        nsn->node->isEnabled = 0;
+        nsn = nsn->next;
+    }
 }
 
 void set_sensor_mode(int sensorID, PSensorNode *list, int mode)
