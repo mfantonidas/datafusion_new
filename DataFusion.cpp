@@ -24,7 +24,6 @@ DataFusionBaseForm(parent, name, fl)
     char buffer[5];
     QString qs;
 
-    //tabpic = new tabPic();
     tabpic = new tabGraph(this);
     TabWidget2->addTab(tabpic, tr("Test"));
     connect(PushButtonStart, SIGNAL(clicked()), this, SLOT(start_catch()));
@@ -52,19 +51,18 @@ DataFusionBaseForm(parent, name, fl)
         s = s->next;
     }
     s = NULL;
-    //lcdtimer->start(200);
+    //lcdtimer->start(200);*/
 }
 
 DataFusionForm::~DataFusionForm()
 {
     isStart = 0;
+    lcdtimer->stop();
     del_sensor_list();
 }
 
 void DataFusionForm::paint()
 {
-    isStart = 1;
-    setBackgroundColor( QColor(255, 255, 102) );
 }
 
 void DataFusionForm::start_catch()
@@ -322,6 +320,7 @@ tabGraph::tabGraph(DataFusionForm *parent)
 
 tabGraph::~tabGraph()
 {
+    drawtimer->stop();
 }
 
 void tabGraph::flush_test_buff()

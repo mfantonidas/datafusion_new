@@ -32,14 +32,13 @@ class DataFusionForm:public DataFusionBaseForm
 public:
     DataFusionForm(QWidget *parent = 0, const char *name = 0, WFlags fl = 0);
     ~DataFusionForm();
-  //tabPic *tabpic;
-  tabGraph *tabpic;
+    tabGraph *tabpic;
 private:
     QTimer *lcdtimer;
     int isAuto;
     int isSingle;
     int isAbnormal;
-    int singleSensor[];
+    int singleSensor[3];
 
     PSensorNode s;
 
