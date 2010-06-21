@@ -51,6 +51,7 @@ DataFusionBaseForm(parent, name, fl)
         }
         s = s->next;
     }
+    s = NULL;
     //lcdtimer->start(200);
 }
 
@@ -119,9 +120,9 @@ void DataFusionForm::mode_change()
 void DataFusionForm::lcd_show()
 {
     PSensorNode psn = NULL;
-    int enableS[] = {0, 0, 0};
+    int enableS[3] = {0, 0, 0};
 
-    /*if (isStart)
+    if (isStart)
     {
         psn = get_sensor_list();
         for(psn; psn != 0;)
@@ -164,8 +165,8 @@ void DataFusionForm::lcd_show()
         LCDNumber2_2->display(0);
         LCDNumber3_2->display(0);
         LCDNumber4_2->display(0);
-        LCDNumber5_6->display(0);
-        }*/
+        LCDNumber5_6->display(0);*/
+    }
 }
 
 void DataFusionForm::sensor_choose_ok()
@@ -178,11 +179,11 @@ void DataFusionForm::sensor_choose_ok()
     psn = get_sensor_list();
     qs = ListBoxSensors->currentText();
     counts = ListBoxSensors->count();
+    init_sensor_stat(&psn);
 
     for (i = 0; i < counts; ++i)
     {
         itoa(i, buf);
-        init_sensor_stat(&psn);
         if(qs == (QString("sensor") + QString(buf)))
         {
             singleSensor[i] = 1;
@@ -345,7 +346,7 @@ void tabGraph::flush_test_buff()
 // Flesh real time data for LcdNumer and graph
 void tabGraph::flushBuff()
 {
-    int tmp = tempbuffer1[0];
+    int tmp;
     unsigned int seed;
     struct timeval now;
     float tmp1;
@@ -362,10 +363,12 @@ void tabGraph::flushBuff()
             enableS[psn->node->sensorID] = psn->node->isEnabled;
             psn = psn->next;
         }
+        psn = NULL;
         //for test
 
         if(enableS[0])
         {
+            tmp = tempbuffer1[0];
             for(int i = 0; i < 200; i++)
             {
                 tempbuffer1[i] = tempbuffer1[i+1];
@@ -475,6 +478,7 @@ void PixTemp::paintEvent(QPaintEvent *event)
         enableS[psn->node->sensorID] = psn->node->isEnabled;
         psn = psn->next;
     }
+    psn = NULL;
 
     for(int i = 0; i < 199; i++)
     {

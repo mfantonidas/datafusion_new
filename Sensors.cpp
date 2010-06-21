@@ -176,18 +176,16 @@ int get_sensor_mode(int sensorID, PSensorNode list)
 void del_sensor_list()
 {
     NSensorNode *nsn = NULL;
-    NSensor *ns = NULL;
-
-    while(psensornode)
+    for(psensornode; psensornode != 0; )
     {
         nsn = psensornode;
-        ns = nsn->node;
-        free(ns);
-        ns = NULL;
+        if(nsn->node)
+            free(nsn->node);
         psensornode = psensornode->next;
         free(nsn);
         nsn = NULL;
     }
+    psensornode = NULL;
 }
 
 void itoa(int i, char *string)
