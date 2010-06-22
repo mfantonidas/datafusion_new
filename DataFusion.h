@@ -12,6 +12,7 @@
 #include <qlistbox.h>
 #include "Sensors.h"
 #include <stdlib.h>
+#include <qlineedit.h>
 
 class PixTemp;
 class PixHumi;

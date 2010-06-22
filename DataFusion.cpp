@@ -25,7 +25,7 @@ DataFusionBaseForm(parent, name, fl)
     QString qs;
 
     tabpic = new tabGraph(this);
-    TabWidget2->addTab(tabpic, tr("Test"));
+    TabWidget2->addTab(tabpic, tr("Graph"));
     connect(PushButtonStart, SIGNAL(clicked()), this, SLOT(start_catch()));
     connect(PushButtonStop, SIGNAL(clicked()), this, SLOT(stop_catch()));
     lcdtimer = new QTimer(this, "lcdtimer");
@@ -68,6 +68,8 @@ void DataFusionForm::paint()
 void DataFusionForm::start_catch()
 {
     PSensorNode psn = NULL;
+    char buf[10];
+    QString qs;
 
     check_radio();
     if(isAuto)
@@ -76,9 +78,15 @@ void DataFusionForm::start_catch()
         for(psn; psn != 0; )
         {
             if(psn->node->avalible)
+            {
                 psn->node->isEnabled = 1;
+                itoa(psn->node->sensorID, buf);
+                qs += QString(" ");
+                qs += QString(buf);
+            }
             psn = psn->next;
         }
+        LineEditMode->setText(QString("Auto, using sensors: ") + qs);
     }
 
     isStart = 1;
@@ -201,6 +209,7 @@ void DataFusionForm::sensor_choose_ok()
             singleSensor[i] = 1;
             set_sensor_stat(i, &psn, 1);
             TextLabelSingleS->setText(QString("sensor") + QString(buf));
+            LineEditMode->setText(QString("Manual, using sensor: ") + QString(buf));
             break;
         }
     }
