@@ -21,9 +21,11 @@ class tabGraph;
 static int tempbuffer1[200];
 static int tempbuffer2[200];
 static int tempbuffer3[200];
+static int tempbufferF[200];
 static int humibuffer1[200];
 static int humibuffer2[200];
 static int humibuffer3[200];
+static int humibufferF[200];
 static int isStart;
 
 class DataFusionForm:public DataFusionBaseForm

@@ -67,7 +67,20 @@ void DataFusionForm::paint()
 
 void DataFusionForm::start_catch()
 {
+    PSensorNode psn = NULL;
+
     check_radio();
+    if(isAuto)
+    {
+        psn = get_sensor_list();
+        for(psn; psn != 0; )
+        {
+            if(psn->node->avalible)
+                psn->node->isEnabled = 1;
+            psn = psn->next;
+        }
+    }
+
     isStart = 1;
     lcdtimer->start(200);
 }
@@ -86,6 +99,7 @@ void DataFusionForm::check_radio()
     }
     else
         isAuto = 0;
+
     if (RadioButtonOne->isChecked())
     {
         isSingle = 1;
@@ -149,8 +163,8 @@ void DataFusionForm::lcd_show()
 
         if (enableS[0] | enableS[1] | enableS[2])
         {
-            LCDNumberFT->display(tempbuffer1[199]);
-            LCDNumberFH->display(humibuffer1[199]);
+            LCDNumberFT->display(tempbufferF[199]);
+            LCDNumberFH->display(humibufferF[199]);
         }
     }
     else
@@ -272,6 +286,11 @@ tabGraph::tabGraph(DataFusionForm *parent)
         tempbuffer3[i] = 0;
     }
 
+    for (int i = 0; i < 200; ++i)
+    {
+        tempbufferF[i] = (tempbuffer1[i] + tempbuffer2[i] + tempbuffer3[i])/3;
+    }
+
     for(int i = 0; i < 200; i++)
     {
         humibuffer1[i] = 0;
@@ -285,6 +304,11 @@ tabGraph::tabGraph(DataFusionForm *parent)
     for(int i = 0; i < 200; ++i)
     {
         humibuffer3[i] = 0;
+    }
+
+    for (int i = 0; i < 200; ++i)
+    {
+        humibufferF[i] = (humibuffer1[i] + humibuffer2[i] + humibuffer3[i])/3;
     }
 
     temptext = new QLabel( this, "temptext" );
@@ -430,6 +454,17 @@ void tabGraph::flushBuff()
             rand = (int)((tmp1*10));
             humibuffer3[199] = rand;
         }
+
+        if (enableS[0] | enableS[1] | enableS[2])
+        {
+            for (int i = 0; i < 200; ++i)
+            {
+                tempbufferF[i] = tempbufferF[i + 1];
+                humibufferF[i] = humibufferF[i + 1];
+            }
+            tempbufferF[199] = (tempbuffer1[199] + tempbuffer2[199] + tempbuffer3[199]) / 3;
+            humibufferF[199] = (humibuffer1[199] + humibuffer2[199] + humibuffer3[199]) / 3;
+        }
     }
 
     tempshow->repaint(0, 0, 270, 120);
@@ -509,9 +544,9 @@ void PixTemp::paintEvent(QPaintEvent *event)
         if(enableS[0] | enableS[1] | enableS[2])
         {
             beginPointF.setX(2*i);
-            beginPointF.setY(tempbuffer1[i] + 60);
+            beginPointF.setY(tempbufferF[i] + 60);
             endPointF.setX(2*i + 1);
-            endPointF.setY(tempbuffer1[i+1] + 60);
+            endPointF.setY(tempbufferF[i+1] + 60);
             painterF.drawLine(beginPointF, endPointF);
         }
 
@@ -588,9 +623,9 @@ void PixHumi::paintEvent(QPaintEvent *event)
         if(enableS[0] | enableS[1] | enableS[2])
         {
             beginPointF.setX(2*i);
-            beginPointF.setY(humibuffer1[i] + 12);
+            beginPointF.setY(humibufferF[i] + 12);
             endPointF.setX(2*i + 1);
-            endPointF.setY(humibuffer1[i+1] + 12);
+            endPointF.setY(humibufferF[i+1] + 12);
             painterF.drawLine(beginPointF, endPointF);
         }
     }
