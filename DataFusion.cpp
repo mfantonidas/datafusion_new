@@ -280,6 +280,11 @@ QWidget(parent)
 
 tabGraph::tabGraph(DataFusionForm *parent)
 {
+    QString picnamet = "/opt/FriendlyARM/mini2440/x86-qtopia/datafusion_new/tempture.PNG";
+    QString picnameh = "/opt/FriendlyARM/mini2440/x86-qtopia/datafusion_new/humidity.bmp";
+    QPixmap pict(picnamet);
+    QPixmap pich(picnameh);
+
     for(int i = 0; i < 200; i++)
     {
         tempbuffer1[i] = (int)(sin((i*3.14)/100)*60);
@@ -326,9 +331,9 @@ tabGraph::tabGraph(DataFusionForm *parent)
 
     tempshow = new PixTemp(this);
     tempshow->setGeometry( QRect(10, 30, 270, 120) );
-    tempshow->setPalette( QPalette( QColor(192, 192, 192) ) );
-    tempshow->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-
+    //tempshow->setPalette( QPalette( QColor(192, 192, 192) ) );
+    //tempshow->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+    tempshow->setPixmap(pict);
 
     humitext = new QLabel( this, "humitext" );
     humitext->setGeometry( QRect(10, 160, 70, 10) );
@@ -336,8 +341,9 @@ tabGraph::tabGraph(DataFusionForm *parent)
 
     humishow = new PixHumi(this);
     humishow->setGeometry(QRect(10, 180, 270, 120));
-    humishow->setPalette( QPalette( QColor(192, 192, 192) ) );
-    humishow->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+    //humishow->setPalette( QPalette( QColor(192, 192, 192) ) );
+    //humishow->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+    humishow->setPixmap(pich);
 
     drawtimer = new QTimer(this, "drawtimer");
     connect(drawtimer, SIGNAL(timeout()), this, SLOT(flushBuff()));
