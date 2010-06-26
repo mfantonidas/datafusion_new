@@ -280,11 +280,6 @@ QWidget(parent)
 
 tabGraph::tabGraph(DataFusionForm *parent)
 {
-    QString picnamet = "/opt/FriendlyARM/mini2440/x86-qtopia/datafusion_new/tempture.PNG";
-    QString picnameh = "/opt/FriendlyARM/mini2440/x86-qtopia/datafusion_new/humidity.bmp";
-    QPixmap pict(picnamet);
-    QPixmap pich(picnameh);
-
     for(int i = 0; i < 200; i++)
     {
         tempbuffer1[i] = (int)(sin((i*3.14)/100)*60);
@@ -325,25 +320,155 @@ tabGraph::tabGraph(DataFusionForm *parent)
         humibufferF[i] = (humibuffer1[i] + humibuffer2[i] + humibuffer3[i])/3;
     }
 
+    tempp1 = new QLabel(this, "tempp1");
+    tempp1->setGeometry(QRect(0, 30, 10, 10));
+    tempp1->setText(tr("40"));
+    tempp2 = new QLabel(this, "tempp2");
+    tempp2->setGeometry(QRect(0, 50, 10, 10));
+    tempp2->setText(tr("30"));
+    tempp3 = new QLabel(this, "tempp3");
+    tempp3->setGeometry(QRect(0, 70, 10, 10));
+    tempp3->setText(tr("20"));
+    tempp4 = new QLabel(this, "tempp4");
+    tempp4->setGeometry(QRect(0, 90, 10, 10));
+    tempp4->setText(tr("10"));
+    tempp5 = new QLabel(this, "tempp5");
+    tempp5->setGeometry(QRect(0, 110, 10, 10));
+    tempp5->setText(tr("0"));
+    sect = new QLabel(this, "sect");
+    sect->setGeometry(QRect(230, 150, 40, 10));
+    sect->setText(tr("time: s"));
+
+    humip1 = new QLabel(this, "humip1");
+    humip1->setGeometry(QRect(0, 175, 10, 10));
+    humip1->setText(tr("60"));
+    humip2 = new QLabel(this, "humip2");
+    humip2->setGeometry(QRect(0, 195, 10, 10));
+    humip2->setText(tr("50"));
+    humip3 = new QLabel(this, "humip3");
+    humip3->setGeometry(QRect(0, 215, 10, 10));
+    humip3->setText(tr("40"));
+    humip4 = new QLabel(this, "humip4");
+    humip4->setGeometry(QRect(0, 235, 10, 10));
+    humip4->setText(tr("30"));
+    humip5 = new QLabel(this, "humip5");
+    humip5->setGeometry(QRect(0, 255, 10, 10));
+    humip5->setText(tr("20"));
+    sech = new QLabel(this, "sech");
+    sech->setGeometry(QRect(230, 295, 40, 10));
+    sech->setText(tr("time: s"));
+
+    //tempp->setFont
+    xs1 = new QFrame(this, "xs1");
+    xs2 = new QFrame(this, "xs2");
+    xs3 = new QFrame(this, "xs3");
+    xs4 = new QFrame(this, "xs4");
+    xs5 = new QFrame(this, "xs5");
+    ys1 = new QFrame(this, "ys1");
+    ys2 = new QFrame(this, "ys2");
+    ys3 = new QFrame(this, "ys3");
+    ys4 = new QFrame(this, "ys4");
+    ys5 = new QFrame(this, "ys5");
+    xsh1 = new QFrame(this, "xsh1");
+    xsh2 = new QFrame(this, "xsh2");
+    xsh3 = new QFrame(this, "xsh3");
+    xsh4 = new QFrame(this, "xsh4");
+    xsh5 = new QFrame(this, "xsh5");
+    ysh1 = new QFrame(this, "ysh1");
+    ysh2 = new QFrame(this, "ysh2");
+    ysh3 = new QFrame(this, "ysh3");
+    ysh4 = new QFrame(this, "ysh4");
+    ysh5 = new QFrame(this, "ysh5");
+
+    xs1->setGeometry(QRect(51, 145, 1, 3));
+    xs1->setFrameStyle(QFrame::VLine | QFrame::Plain);
+    xs2->setGeometry(QRect(97, 145, 1, 3));
+    xs2->setFrameStyle(QFrame::VLine | QFrame::Plain);
+    xs3->setGeometry(QRect(143, 145, 1, 3));
+    xs3->setFrameStyle(QFrame::VLine | QFrame::Plain);
+    xs4->setGeometry(QRect(189, 145, 1, 3));
+    xs4->setFrameStyle(QFrame::VLine | QFrame::Plain);
+    xs5->setGeometry(QRect(235, 145, 1, 3));
+    xs5->setFrameStyle(QFrame::VLine | QFrame::Plain);
+
+    ys1->setGeometry(QRect(11, 36, 3, 1));
+    ys1->setFrameStyle(QFrame::HLine | QFrame::Plain);
+    ys2->setGeometry(QRect(11, 56, 3, 1));
+    ys2->setFrameStyle(QFrame::HLine | QFrame::Plain);
+    ys3->setGeometry(QRect(11, 76, 3, 1));
+    ys3->setFrameStyle(QFrame::HLine | QFrame::Plain);
+    ys4->setGeometry(QRect(11, 96, 3, 1));
+    ys4->setFrameStyle(QFrame::HLine | QFrame::Plain);
+    ys5->setGeometry(QRect(11, 116, 3, 1));
+    ys5->setFrameStyle(QFrame::HLine | QFrame::Plain);
+
+    xsh1->setGeometry(QRect(51, 290, 1, 3));
+    xsh1->setFrameStyle(QFrame::VLine | QFrame::Plain);
+    xsh2->setGeometry(QRect(97, 290, 1, 3));
+    xsh2->setFrameStyle(QFrame::VLine | QFrame::Plain);
+    xsh3->setGeometry(QRect(143, 290, 1, 3));
+    xsh3->setFrameStyle(QFrame::VLine | QFrame::Plain);
+    xsh4->setGeometry(QRect(189, 290, 1, 3));
+    xsh4->setFrameStyle(QFrame::VLine | QFrame::Plain);
+    xsh5->setGeometry(QRect(235, 290, 1, 3));
+    xsh5->setFrameStyle(QFrame::VLine | QFrame::Plain);
+
+    ysh1->setGeometry(QRect(11, 181, 3, 1));
+    ysh1->setFrameStyle(QFrame::HLine | QFrame::Plain);
+    ysh2->setGeometry(QRect(11, 201, 3, 1));
+    ysh2->setFrameStyle(QFrame::HLine | QFrame::Plain);
+    ysh3->setGeometry(QRect(11, 221, 3, 1));
+    ysh3->setFrameStyle(QFrame::HLine | QFrame::Plain);
+    ysh4->setGeometry(QRect(11, 241, 3, 1));
+    ysh4->setFrameStyle(QFrame::HLine | QFrame::Plain);
+    ysh5->setGeometry(QRect(11, 261, 3, 1));
+    ysh5->setFrameStyle(QFrame::HLine | QFrame::Plain);
+
+    scale_t_x = new QFrame(this, "scale_t_x");
+    scale_t_y = new QFrame(this, "scale_t_y");
+    scale_t_x->setGeometry(QRect(5, 148, 282, 1));
+    scale_t_x->setFrameStyle(QFrame::HLine | QFrame::Plain);
+    scale_t_y->setGeometry(QRect(11, 16, 1, 135));
+    scale_t_y->setFrameStyle(QFrame::VLine | QFrame::Plain);
+    scale_h_x = new QFrame(this, "scale_h_x");
+    scale_h_y = new QFrame(this, "scale_h_y");
+    scale_h_x->setGeometry(QRect(5, 293, 282, 1));
+    scale_h_x->setFrameStyle(QFrame::HLine | QFrame::Plain);
+    scale_h_y->setGeometry(QRect(11, 161, 1, 135));
+    scale_h_y->setFrameStyle(QFrame::VLine | QFrame::Plain);
+
+    x1 = new QFrame(this, "x1");
+    x2 = new QFrame(this, "x2");
+    y1 = new QFrame(this, "y1");
+    y2 = new QFrame(this, "y2");
+    x1->setGeometry(QRect(12, 18, 1, 2));
+    x1->setFrameStyle(QFrame::VLine | QFrame::Plain);
+    x2->setGeometry(QRect(13, 19, 1, 1));
+    x2->setFrameStyle(QFrame::VLine | QFrame::Plain);
+    y1->setGeometry(QRect(284, 147, 2, 1));
+    y1->setFrameStyle(QFrame::HLine | QFrame::Plain);
+    y2->setGeometry(QRect(284, 146, 1, 1));
+    y2->setFrameStyle(QFrame::VLine | QFrame::Plain);
+    //xs1->setGeometry(QRect(12, 17, 1, 1));
+    //xs1->setFrameStyle(QFrame::VLine | QFrame::Plain);
+
     temptext = new QLabel( this, "temptext" );
-    temptext->setGeometry( QRect(10, 10, 70, 10) );
-    temptext->setText( tr( "Tempture:  " ) );
+    temptext->setGeometry( QRect(20, 7, 70, 10) );
+    temptext->setText( tr( "Tempture: 'C " ) );
 
     tempshow = new PixTemp(this);
-    tempshow->setGeometry( QRect(10, 30, 270, 120) );
-    //tempshow->setPalette( QPalette( QColor(192, 192, 192) ) );
-    //tempshow->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-    tempshow->setPixmap(pict);
+    tempshow->setGeometry( QRect(15, 25, 270, 120) );
+    tempshow->setPalette( QPalette( white/*QColor(192, 192, 192)*/ ) );
+    tempshow->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 
     humitext = new QLabel( this, "humitext" );
-    humitext->setGeometry( QRect(10, 160, 70, 10) );
-    humitext->setText( tr( "Humidity:  " ) );
+    humitext->setGeometry( QRect(20, 155, 70, 10) );
+    humitext->setText( tr( "Humidity:  %" ) );
 
     humishow = new PixHumi(this);
-    humishow->setGeometry(QRect(10, 180, 270, 120));
-    //humishow->setPalette( QPalette( QColor(192, 192, 192) ) );
-    //humishow->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-    humishow->setPixmap(pich);
+    humishow->setGeometry(QRect(15, 170, 270, 120));
+    humishow->setPalette( QPalette( white/*QColor(192, 192, 192)*/ ) );
+    humishow->setFrameStyle( QFrame::Panel | QFrame::Sunken );
 
     drawtimer = new QTimer(this, "drawtimer");
     connect(drawtimer, SIGNAL(timeout()), this, SLOT(flushBuff()));

@@ -13,6 +13,7 @@
 #include "Sensors.h"
 #include <stdlib.h>
 #include <qlineedit.h>
+//#include <QLine>
 
 class PixTemp;
 class PixHumi;
@@ -78,6 +79,37 @@ public:
     PixHumi *humishow;
     QLabel *temptext;
     QLabel *humitext;
+    QLabel *tempp1;
+    QLabel *tempp2;
+    QLabel *tempp3;
+    QLabel *tempp4;
+    QLabel *tempp5;
+    QLabel *humip1, *humip2, *humip3, *humip4, *humip5;
+    QLabel *sect;
+    QLabel *sech;
+    QFrame *scale_t_x;
+    QFrame *scale_t_y;
+    QFrame *scale_h_x;
+    QFrame *scale_h_y;
+    QFrame *x1, *xh1;
+    QFrame *x2, *xh2;
+    QFrame *y1, *yh1;
+    QFrame *y2, *yh2;
+    QFrame *xs1, *xsh1;
+    QFrame *xs2, *xsh2;
+    QFrame *xs3, *xsh3;
+    QFrame *xs4, *xsh4;
+    QFrame *xs5, *xsh5;
+    QFrame *xs6, *xsh6;
+    QFrame *ys1, *ysh1;
+    QFrame *ys2, *ysh2;
+    QFrame *ys3, *ysh3;
+    QFrame *ys4, *ysh4;
+    QFrame *ys5, *ysh5;
+
+//    QLine scaletem;
+//    QLine scalehum;
+
 protected slots:
     void flushBuff();
 
@@ -98,6 +130,7 @@ public:
     PixTemp(QWidget *parent = 0);
     ~PixTemp();
     tabGraph* parentHandle;
+
 protected:
     void paintEvent(QPaintEvent *);
 protected slots:
