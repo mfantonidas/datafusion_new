@@ -1,6 +1,18 @@
 #include <malloc.h>
 #include "Sensors.h"
+#include "SerialComm.h"
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <termios.h>
+#include <errno.h>
+#include <sys/time.h>
+#include <time.h>
+#include <signal.h>
+#include <stdio.h>
 
 static PSensorNode psensornode;
 
@@ -11,12 +23,43 @@ void create_sensor_list()
      * */
     //just for a test
     int i;
+    int fd;
+    int count;
+    int res, ready = 0;
+    char buf[255];
     NSensor *aSensor = NULL;
     PSensorNode psn = NULL;
     PSensorNode pstemp = NULL;
     NSensorNode *nsn = NULL;
 
-    for(i = 0; i < 3; ++i)
+    fd = open_port(3);
+    if(fd <= 0)
+        return;
+    if(set_opt(fd, 19200, 8, 'N', 1) <= 0)
+        return;
+    printf("open sucessful!\n");
+
+    while(!ready)
+    {
+        res = read(fd, buf, 255);
+        if(res)
+        {
+            buf[res] = '\0';
+            for(i = 0; i < res; i++)
+            {
+                if(buf[i] == 'N')
+                {
+                    count = buf[i + 1] - 48;
+                    printf("%d\n", count);
+                    ready = 1;
+                    break;
+                }
+            }
+        }
+        usleep(100000);
+    }
+
+    for(i = 0; i < count; ++i)
     {
         aSensor = (NSensor *)malloc(sizeof(NSensor));
 //        aSensor->name = (char *)malloc(sizeof(char)*20);

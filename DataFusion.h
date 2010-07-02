@@ -11,6 +11,7 @@
 #include <qradiobutton.h>
 #include <qlistbox.h>
 #include "Sensors.h"
+#include "SerialComm.h"
 #include <stdlib.h>
 #include <qlineedit.h>
 //#include <QLine>
