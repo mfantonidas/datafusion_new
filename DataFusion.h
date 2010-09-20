@@ -11,9 +11,12 @@
 #include <qradiobutton.h>
 #include <qlistbox.h>
 #include "Sensors.h"
-#include "SerialComm.h"
+//#include "SerialComm.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <qlineedit.h>
+#include <pthread.h>
+#include "serial.h"
 //#include <QLine>
 
 class PixTemp;
@@ -30,6 +33,20 @@ static int humibuffer2[200];
 static int humibuffer3[200];
 static int humibufferF[200];
 static int isStart;
+static char databuf[255];
+static int isReady = 0;
+static int fd, pipe_fd[2];
+static fd_set rd;
+static int nread;
+static int sdsize;
+static int notEmpty = 0;
+static char buff[512];
+static char buffr[512];
+//static SensorData sensordata[6] ;
+static int pipe_size;
+static pthread_mutex_t buff_lock;
+
+static int init_serial(SerialPort port);
 
 class DataFusionForm:public DataFusionBaseForm
 {
@@ -40,12 +57,15 @@ public:
     tabGraph *tabpic;
 private:
     QTimer *lcdtimer;
+    //QTimer *serialtimer;
     int isAuto;
     int isSingle;
     int isAbnormal;
     int singleSensor[3];
-
+    pid_t fock_fd;
     PSensorNode s;
+    pthread_t thread[2];
+    //pthread_mutex_t buff_lock;
 
     virtual void check_radio();
 public slots:
@@ -53,6 +73,7 @@ public slots:
     virtual void start_catch();
     virtual void stop_catch();
     virtual void lcd_show();
+    virtual void serial_catch();
     virtual void mode_change();
     virtual void sensor_choose_ok();
 
@@ -76,6 +97,7 @@ public:
     tabGraph(QWidget *parent = 0);
     tabGraph(DataFusionForm *parent = 0);
     ~tabGraph();
+    int fd;
     PixTemp *tempshow;
     PixHumi *humishow;
     QLabel *temptext;
@@ -88,6 +110,8 @@ public:
     QLabel *humip1, *humip2, *humip3, *humip4, *humip5;
     QLabel *sect;
     QLabel *sech;
+    QLabel *cs1, *cs2, *cs3, *cf;
+    QFrame *coloryellow, *colorred, *colorblue, *colorblack;
     QFrame *scale_t_x;
     QFrame *scale_t_y;
     QFrame *scale_h_x;
@@ -135,7 +159,7 @@ public:
 protected:
     void paintEvent(QPaintEvent *);
 protected slots:
-//  void flushBuff();
+//  void flushBuffs();
 private:
 //  QFrame *
 };

@@ -11,6 +11,143 @@
 
 class PixPaint;
 static int count = 0;
+static SensorData sensordata[6] ;
+
+void *arg = NULL;
+
+static int init_serial(SerialPort port)
+{
+    char *dev;
+
+    switch(port)
+    {
+        case TTYS0:
+            dev = "/dev/ttyS0";
+            break;
+        case TTYS1:
+            dev = "/dev/ttyS1";
+            break;
+        case TTYSAC0:
+            dev = "/dev/ttySAC0";
+            break;
+        case TTYSAC1:
+            dev = "/dev/ttySAC1";
+            break;
+        case TTYUSB0:
+            dev = "/dev/ttyUSB0";
+            break;
+        case TTYUSB1:
+            dev = "/dev/ttyUSB1";
+            break;
+    }
+    printf("%s\n", dev);
+
+    fd = OpenDev(dev);
+    if (-1 == fd)
+    { //设置数据位数
+        perror("Can't Open Serial Port");
+        return -1;
+    }
+    if (fd>0)
+        set_speed(fd,19200); //打开后设置波特率19200
+    else
+    {
+        printf("Can't Open Serial Port!\n");
+        exit(0);
+    }
+    if (set_Parity(fd, 8, 1,'n')== FALSE) //设置8，1，n 注意，这里和上面要和下位机相符才可能通信
+    {
+        printf("Set Parity Error\n");
+        exit(1);
+    }
+    return 0;
+}
+
+void *thread0(void *arg)
+{
+    int ret;
+    char *buf = (char *)arg;
+    struct timeval aTime;
+    aTime.tv_sec = 5;
+    aTime.tv_usec = 0;
+
+    while(1)
+    {
+        FD_ZERO(&rd);
+        FD_SET(fd,&rd);
+        //printf("in father!\n");
+
+        //close(pipe_fd[0]);
+        ret = select(fd+1,&rd,NULL,NULL,&aTime);
+
+        if(ret > 0)
+        {
+            if(FD_ISSET(fd,&rd))
+            {
+                printf("in father!\n");
+                bzero(buff, sizeof(buff));
+
+                nread = read(fd,buff,112);
+                if(nread > 1)
+                {
+                     notEmpty = 1;
+                     printf("nread = %d,%s\n",nread,buff);
+                     //pthread_mutex_lock(&buff_lock);
+                     if(write(pipe_fd[1], buff, 115) != -1)
+                         printf("write pipe success!\n");
+                }
+                printf("nread = %d,%s\n",nread,buff);
+            }
+        }
+        //       close(pipe_fd[0]);
+        //sleep(1);
+    }
+}
+
+void *thread1(void *arg)
+{
+    int i;
+    char *buf = (char *)arg;
+    while(1)
+    {
+        sleep(1);
+        //down_read(&wrsem);
+//        close(pipe_fd[1]);
+        //pthread_mutex_lock(&buff_lock);
+        printf("notEmpty: %d\n", notEmpty);
+        if(notEmpty)
+        {
+            pipe_size = read(pipe_fd[0], buffr, 115);
+            printf("pipisize: %d\n", pipe_size);
+
+            if(pipe_size > 0)
+            {
+                printf("pipe_size: %d\n", pipe_size);
+                data_filter(buffr, sensordata, 112, sdsize);
+                printf ("child:%s\n", buffr);
+                for(i = 0; i < sdsize; i++)
+                {
+                    printf ("sensor:%d,%d: temperture: %d, humidity: %d\n", sensordata[i].sensorID, i, sensordata[i].temperture, sensordata[i].humidity);
+                }
+                notEmpty = 0;
+            }
+        }
+        else
+            printf("empty\n");
+
+        //pthread_mutex_unlock(&buff_lock);
+
+    }
+}
+
+void init_pipe()
+{
+    if(pipe(pipe_fd) < 0)
+    {
+        printf ("create pipe err!\n");
+        return;
+    }
+}
 
 DataFusionForm::DataFusionForm(QWidget *parent, const char *name, WFlags fl):
 DataFusionBaseForm(parent, name, fl)
@@ -29,7 +166,9 @@ DataFusionBaseForm(parent, name, fl)
     connect(PushButtonStart, SIGNAL(clicked()), this, SLOT(start_catch()));
     connect(PushButtonStop, SIGNAL(clicked()), this, SLOT(stop_catch()));
     lcdtimer = new QTimer(this, "lcdtimer");
+    //serialtimer = new QTimer(this, "serialtimer");
     connect(lcdtimer, SIGNAL(timeout()), this, SLOT(lcd_show()));
+    //connect(serialtimer, SIGNAL(timeout()), this, SLOT(serial_catch()));
     connect(RadioButtonAuto, SIGNAL(clicked()), this, SLOT(mode_change()));
     connect(RadioButtonManual, SIGNAL(clicked()), this, SLOT(mode_change()));
     connect(RadioButtonOne, SIGNAL(clicked()), this, SLOT(mode_change()));
@@ -39,6 +178,8 @@ DataFusionBaseForm(parent, name, fl)
     PushButtonChooseS->setDisabled(true);
     create_sensor_list();
     s = get_sensor_list();
+    if(s)
+        printf("%s\n", s->node->name);
 
     for(s; s!=0; )
     {
@@ -51,6 +192,27 @@ DataFusionBaseForm(parent, name, fl)
         s = s->next;
     }
     s = NULL;
+
+    pthread_mutex_init(&buff_lock, NULL);
+
+    sdsize = sizeof(sensordata)/sizeof(SensorData);
+    notEmpty = 0;
+
+    init_serial(TTYUSB0);
+    init_pipe();
+
+    ::pthread_create(&thread[0], NULL, thread0, (void *)arg);
+    ::pthread_create(&thread[1], NULL, thread1, (void *)arg);
+    /*
+    if(thread[0] !=0) {                   //comment4
+        pthread_join(thread[0],NULL);
+        printf("线程1已经结束\n");
+    }
+    if(thread[1] !=0) {                //comment5
+        pthread_join(thread[1],NULL);
+        printf("线程2已经结束\n");
+        }*/
+
     //lcdtimer->start(200);*/
 }
 
@@ -58,6 +220,7 @@ DataFusionForm::~DataFusionForm()
 {
     isStart = 0;
     lcdtimer->stop();
+    //serialtimer->stop();
     del_sensor_list();
 }
 
@@ -91,12 +254,14 @@ void DataFusionForm::start_catch()
 
     isStart = 1;
     lcdtimer->start(200);
+    //serialtimer->start(70);
 }
 
 void DataFusionForm::stop_catch()
 {
     isStart = 0;
     lcdtimer->stop();
+    //serialtimer->stop();
 }
 
 void DataFusionForm::check_radio()
@@ -153,27 +318,33 @@ void DataFusionForm::lcd_show()
 
         if (enableS[0])
         {
-            LCDNumberST1->display(tempbuffer1[199]);
-            LCDNumberSH1->display(humibuffer1[199]);
+            LCDNumberST1->display(/*tempbuffer1[199]*/28.2);
+            LCDNumberSH1->display(/*humibuffer1[199]*/76.5);
         }
 
         if (enableS[1])
         {
-            LCDNumberST2->display(tempbuffer2[199]);
-            LCDNumberSH2->display(humibuffer2[199]);
+            LCDNumberST2->display(/*tempbuffer2[199]*/29.1);
+            LCDNumberSH2->display(/*humibuffer2[199]*/78.2);
         }
 
         if (enableS[2])
         {
-            LCDNumberST3->display(tempbuffer3[199]);
-            LCDNumberSH3->display(humibuffer3[199]);
+            LCDNumberST3->display(/*tempbuffer3[199]*/25.3);
+            LCDNumberSH3->display(/*humibuffer3[199]*/73.5);
         }
 
         if (enableS[0] | enableS[1] | enableS[2])
         {
-            LCDNumberFT->display(tempbufferF[199]);
-            LCDNumberFH->display(humibufferF[199]);
+            LCDNumberFT->display(/*tempbufferF[199]*/27.6);
+            LCDNumberFH->display(/*humibufferF[199]*/77.1);
         }
+        LCDNumberST4->display(/*tempbuffer3[199]*/23.6);
+        LCDNumberSH4->display(/*humibuffer3[199]*/74.4);
+        LCDNumberST5->display(/*tempbuffer3[199]*/22.9);
+        LCDNumberSH5->display(/*humibuffer3[199]*/74.3);
+        LCDNumberST6->display(/*tempbuffer3[199]*/24.7);
+        LCDNumberSH6->display(/*humibuffer3[199]*/76.6);
     }
     else
     {
@@ -187,6 +358,16 @@ void DataFusionForm::lcd_show()
         LCDNumber4_2->display(0);
         LCDNumber5_6->display(0);*/
     }
+}
+
+void DataFusionForm::serial_catch()
+{
+    if(fock_fd == 0)
+    {
+        printf("child!\n");
+    }
+//    else if(fock_fd > 0)
+    //      printf("father!\n");
 }
 
 void DataFusionForm::sensor_choose_ok()
@@ -268,7 +449,7 @@ QWidget(parent)
 
     drawtimer = new QTimer(this, "drawtimer");
     connect(drawtimer, SIGNAL(timeout()), this, SLOT(flushBuff()));
-    drawtimer->start(30);
+    drawtimer->start(70);
 
     /*
      *  Random data for test
@@ -319,6 +500,35 @@ tabGraph::tabGraph(DataFusionForm *parent)
     {
         humibufferF[i] = (humibuffer1[i] + humibuffer2[i] + humibuffer3[i])/3;
     }
+
+    colorblue = new QFrame(this, "colorblue");
+    colorblue->setGeometry(QRect(10, 310, 10, 10));
+    colorblue->setPalette( QPalette( blue/*QColor(192, 192, 192)*/ ) );
+    colorblue->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+    cs1 = new QLabel(this, "cs1");
+    cs1->setGeometry(QRect(25, 310, 50, 10));
+    cs1->setText(tr(": sensor1"));
+    colorred = new QFrame(this, "colorred");
+    colorred->setGeometry(QRect(100, 310, 10, 10));
+    colorred->setPalette( QPalette( red/*QColor(192, 192, 192)*/ ) );
+    colorred->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+    cs2 = new QLabel(this, "cs2");
+    cs2->setGeometry(QRect(115, 310, 50, 10));
+    cs2->setText(tr(": sensor2"));
+    coloryellow = new QFrame(this, "coloryellow");
+    coloryellow->setGeometry(QRect(10, 330, 10, 10));
+    coloryellow->setPalette( QPalette( yellow/*QColor(192, 192, 192)*/ ) );
+    coloryellow->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+    cs3 = new QLabel(this, "cs3");
+    cs3->setGeometry(QRect(25, 330, 50, 10));
+    cs3->setText(tr(": sensor3"));
+    colorblack = new QFrame(this, "colorblack");
+    colorblack->setGeometry(QRect(100, 330, 10, 10));
+    colorblack->setPalette( QPalette( black/*QColor(192, 192, 192)*/ ) );
+    colorblack->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+    cf = new QLabel(this, "cf");
+    cf->setGeometry(QRect(115, 330, 50, 10));
+    cf->setText(tr(": fused"));
 
     tempp1 = new QLabel(this, "tempp1");
     tempp1->setGeometry(QRect(0, 30, 10, 10));
@@ -474,6 +684,7 @@ tabGraph::tabGraph(DataFusionForm *parent)
     connect(drawtimer, SIGNAL(timeout()), this, SLOT(flushBuff()));
     drawtimer->start(30);
 
+//    fd =
     /*
      *  Random data for test
      * */
@@ -485,6 +696,7 @@ tabGraph::tabGraph(DataFusionForm *parent)
 tabGraph::~tabGraph()
 {
     drawtimer->stop();
+    close(fd);
 }
 
 void tabGraph::flush_test_buff()
@@ -515,12 +727,39 @@ void tabGraph::flushBuff()
     float tmp1;
     int rand;
     int i=0,j;
+    int fd;
+    int ready = 0, res;
     PSensorNode psn;
     int enableS[3] = {0, 0, 0};
 
     if(isStart){
+        //fd = open_port(3);
+        //if(fd <= 0)
+        //    return;
+        //if(set_opt(fd, 19200, 8, 'N', 1) <= 0)
+        //    return;
+        //printf("open sucessful!\n");
 
         psn = get_sensor_list();
+
+        /*while(!ready)
+        {
+            memset(buf, 0, 255);
+            res = read(fd, buf, 255);
+            if(res)
+            {
+                buf[res] = '\0';
+                for(i = 0; i < res; i++)
+                {
+                    if(buf[i] == 'N')
+                    {
+                        ready = 1;
+                        break;
+                    }
+                }
+            }
+            }*/
+
         for(psn; psn != 0;)
         {
             enableS[psn->node->sensorID] = psn->node->isEnabled;
@@ -546,7 +785,17 @@ void tabGraph::flushBuff()
             }
             tmp1 = (float)rand_r(&seed)/RAND_MAX*0.9+0.1;
             rand = (int)((tmp1*10));
-            humibuffer1[199] = rand;
+            /*for(i = 0; i < res; i++)
+            {
+                if(buf[i] == 'H')
+                {
+                    humibuffer1[199] = buf[i + 1] - 48;
+                    humibuffer1[199] = humibuffer1[199]*10 + buf[i + 2] - 48;
+                }
+                humibuffer1[199] = rand;
+}*/
+                humibuffer1[199] = rand;
+
         }
 
         if (enableS[1])
@@ -606,6 +855,7 @@ void tabGraph::flushBuff()
             humibufferF[199] = (humibuffer1[199] + humibuffer2[199] + humibuffer3[199]) / 3;
         }
     }
+//    close(fd);
 
     tempshow->repaint(0, 0, 270, 120);
     humishow->repaint(0, 0, 270, 120);
