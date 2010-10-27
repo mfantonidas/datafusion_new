@@ -46,7 +46,7 @@ static char buffr[512];
 static int pipe_size;
 static pthread_mutex_t buff_lock;
 
-static int init_serial(SerialPort port);
+//static int init_serial(SerialPort port);
 
 class DataFusionForm:public DataFusionBaseForm
 {

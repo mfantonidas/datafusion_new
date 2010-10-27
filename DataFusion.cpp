@@ -11,13 +11,76 @@
 
 class PixPaint;
 static int count = 0;
-static SensorData sensordata[6] ;
+static int TtyFd;
+static struct termios BackupTtyAttr;
+static char buffer[20];
+
+static SensorData sensordata[6];
 
 void *arg = NULL;
 
-static int init_serial(SerialPort port)
+static inline void WaitFdWriteable(int Fd)
+{
+    fd_set WriteSetFD;
+    FD_ZERO(&WriteSetFD);
+    FD_SET(Fd, &WriteSetFD);
+    if (select(Fd + 1, NULL, &WriteSetFD, NULL, NULL) < 0) {
+        perror(strerror(errno));
+    }
+}
+
+static int init_serial(SerialPort port, int speed)
 {
     char *dev;
+    int DeviceSpeed;
+    struct termios TtyAttr;
+    int ByteBits = CS8;
+
+    switch(port)
+    {
+        case TTYS0:
+            dev = "/dev/ttyS0";
+            break;
+        case TTYS1:
+            dev = "/dev/ttyS1";
+            break;
+        case TTYSAC0:
+            dev = "/dev/ttySAC0";
+            break;
+        case TTYSAC1:
+            dev = "/dev/ttySAC1";
+            break;
+        case TTYUSB0:
+            dev = "/dev/ttyUSB0";
+            break;
+        case TTYUSB1:
+            dev = "/dev/ttyUSB1";
+            break;
+    }
+
+    fd = open(dev, O_RDWR, 0);
+    if (fd < 0)
+        perror("Unable to open device");
+    if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0)
+        perror("Unable set to NONBLOCK mode");
+
+    DeviceSpeed = get_speed(speed);
+
+    memset(&TtyAttr, 0, sizeof(struct termios));
+    TtyAttr.c_iflag = IGNPAR;
+    TtyAttr.c_cflag = DeviceSpeed | HUPCL | ByteBits | CREAD | CLOCAL;
+    TtyAttr.c_cc[VMIN] = 1;
+    if (tcsetattr(fd, TCSANOW, &TtyAttr) < 0)
+        perror("Unable to set comm port");
+    TtyFd = open("/dev/tty", O_RDWR | O_NDELAY, 0);//
+    if (TtyFd < 0)
+        perror("Unable to open tty");
+    TtyAttr.c_cflag = DeviceSpeed | HUPCL | ByteBits | CREAD | CLOCAL;
+    if (tcgetattr(TtyFd, &BackupTtyAttr) < 0)
+        perror("Unable to get tty");
+    if (tcsetattr(TtyFd, TCSANOW, &TtyAttr) < 0)
+        perror("Unable to set tty");
+    /*char *dev;
 
     switch(port)
     {
@@ -48,6 +111,9 @@ static int init_serial(SerialPort port)
         perror("Can't Open Serial Port");
         return -1;
     }
+    if (fcntl(CommFd, F_SETFL, O_NONBLOCK) < 0)
+        perror("Unable set to NONBLOCK mode");
+
     if (fd>0)
         set_speed(fd,19200); //打开后设置波特率19200
     else
@@ -60,12 +126,122 @@ static int init_serial(SerialPort port)
         printf("Set Parity Error\n");
         exit(1);
     }
-    return 0;
+    return 0;*/
 }
 
 void *thread0(void *arg)
 {
-    int ret;
+    char Char = 0;
+    char buffeer[20];
+    int sensorID_s = 0;
+    int sensorID = 0;
+    int tempv_s = 0;
+    int tempv = 0, templ = 0;
+    int humiv_s = 0;
+    int humiv = 0, humil = 0;
+    int datacount_s = 0;
+    int datacountv = 0;
+    int templ_s = 0, humil_s = 0;
+    int i;
+
+    for (;;) {
+
+        fd_set ReadSetFD;
+
+        FD_ZERO(&ReadSetFD);
+        FD_SET( fd, &ReadSetFD);
+        FD_SET( TtyFd, &ReadSetFD);
+# define max(x,y) ( ((x) >= (y)) ? (x) : (y) )
+        if (select(max(fd, TtyFd) + 1, &ReadSetFD, NULL, NULL, NULL) < 0) {
+            perror(strerror(errno));
+        }
+# undef max
+        if (FD_ISSET(fd, &ReadSetFD)) {
+            static int count1 = 0;
+            static int read_ok = 0;
+
+            while (read(fd, &Char, 1) == 1) {
+                static int count_t = 0, count_t_l = 0, count_h = 0, count_h_l = 0;
+                static int t_ok = 0, h_ok = 0;
+
+                WaitFdWriteable(TtyFd);
+
+                if(Char == 32 || Char == 33 || (Char >= 48 && Char <= 57) || (Char >= 65 && Char <= 90) || (Char >= 97 && Char <= 122))
+                {
+                    if(Char != 'x')
+                        strcat(buffeer,&Char);
+                    else
+                    {
+                        strcat(buffeer,&Char);
+                        read_ok = 1;
+                    }
+
+                }
+
+
+                /*if (write(TtyFd, &Char, 1) < 0) {
+                    Error(strerror(errno));
+                    }*/
+
+            }
+            if(read_ok == 1)
+            {
+                //printf ("\n\r%s\n", buffer);
+                for(i = 0; i < 20 && buffer[i] != 'x'; i++)
+                {
+                    if(buffer[i] == 'S')
+                        sensorID = buffer[i + 1] - 48;
+                    if(buffer[i] == 'T')
+                    {
+                        datacountv = buffer[i + 1] - 48;
+                        templ = buffer[i + 3] - 48;
+                        if(templ == 0 || templ == 1)
+                            tempv = buffer[i + 4] - 48;
+                        else if(templ == 2)
+                            tempv = (buffer[i + 4] - 48)*10 + buffer[i + 5] - 48;
+                        else if(templ == 3)
+                            tempv = (buffer[i + 4] - 48)*100 + (buffer[i + 5] - 48)*10 + buffer[i + 6] - 48;
+                    }
+                    if(buffer[i] == 'H')
+                    {
+                        humil = buffer[i + 3] - 48;
+                        if(humil == 0 || humil == 1)
+                            humiv = buffer[i + 4] - 48;
+                        else if(humil == 2)
+                            humiv = (buffer[i + 4] - 48)*10 + buffer[i + 5] - 48;
+                        else if(humil == 3)
+                            humiv = (buffer[i + 4] - 48)*100 + (buffer[i + 5] - 48)*10 + buffer[i + 6] - 48;
+                    }
+                }
+                printf("\n\rsensorID:%d,templ:%d,tempv:%d,humil:%d,humiv:%d,count:%d", sensorID, templ,tempv,humil, humiv, datacountv);
+
+                memset(buffer, 0, sizeof(buffer));
+                buffer[0] = '\0';
+                read_ok = 0;
+            }
+
+        }
+        if (FD_ISSET(TtyFd, &ReadSetFD)) {
+            while (read(TtyFd, &Char, 1) == 1) {
+                static int EscKeyCount = 0;
+                WaitFdWriteable(fd);
+                if (write(fd, &Char, 1) < 0) {
+                    perror(strerror(errno));
+                }
+                if (Char == '\x1b') {
+                    EscKeyCount ++;
+                    if (EscKeyCount >= 3)
+                        goto ExitLabel;
+                } else
+                EscKeyCount = 0;
+            }
+        }
+    }
+ExitLabel:
+    if (tcsetattr(TtyFd, TCSANOW, &BackupTtyAttr) < 0)
+        perror("Unable to set tty");
+    return 0;
+    /*int ret;
     char *buf = (char *)arg;
     struct timeval aTime;
     aTime.tv_sec = 5;
@@ -101,7 +277,7 @@ void *thread0(void *arg)
         }
         //       close(pipe_fd[0]);
         //sleep(1);
-    }
+        }*/
 }
 
 void *thread1(void *arg)
@@ -198,11 +374,11 @@ DataFusionBaseForm(parent, name, fl)
     sdsize = sizeof(sensordata)/sizeof(SensorData);
     notEmpty = 0;
 
-    init_serial(TTYUSB0);
+    init_serial(TTYUSB0, 19200);
     init_pipe();
 
     ::pthread_create(&thread[0], NULL, thread0, (void *)arg);
-    ::pthread_create(&thread[1], NULL, thread1, (void *)arg);
+//    ::pthread_create(&thread[1], NULL, thread1, (void *)arg);
     /*
     if(thread[0] !=0) {                   //comment4
         pthread_join(thread[0],NULL);

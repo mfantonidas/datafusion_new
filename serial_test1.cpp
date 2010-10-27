@@ -11,25 +11,13 @@
 #define TRUE 1
 #define FALSE 0
 
-void set_speed(int fd, int speed)
+int get_speed(int speed)
 {
     int i;
-    int status;
-    struct termios Opt; //定义了这样一个结构
-    tcgetattr(fd, &Opt); //用来得到机器原端口的默认设置
     for ( i= 0; i < sizeof(speed_arr) / sizeof(int); i++)
     {
         if (speed == name_arr[i]) //判断传进来是否相等
-        {
-            tcflush(fd, TCIOFLUSH); //刷新输入输出缓冲
-            cfsetispeed(&Opt, speed_arr[i]); //这里分别设置
-            cfsetospeed(&Opt, speed_arr[i]);
-            status = tcsetattr(fd, TCSANOW, &Opt); //这是立刻把bote rates设置真正写到串口中去
-            if (status != 0)
-                perror("tcsetattr fd1"); //设置错误
-            return;
-        }
-        tcflush(fd,TCIOFLUSH); //同上
+            return speed_arr[i];
     }
 }
 
@@ -110,7 +98,7 @@ int set_Parity(int fd,int databits,int stopbits,int parity)
 
 int OpenDev(char *Dev)
 {
-    int fd = open( Dev, O_RDWR ); //| O_NOCTTY | O_NDELAY这种方式看open函数
+    int fd = open( Dev, O_RDWR, 0); //| O_NOCTTY | O_NDELAY这种方式看open函数
     if (-1 == fd)
     { /*设置数据位数*/
         perror("Can't Open Serial Port");

@@ -26,7 +26,7 @@ static int speed_arr[] = { B38400, B19200, B9600, B4800, B2400, B1200, B300,
 static int name_arr[] = { 38400, 19200, 9600, 4800, 2400, 1200, 300,
                    38400, 19200, 9600, 4800, 2400, 1200, 300 };
 
-extern void set_speed(int fd, int speed);
+extern int get_speed(int speed);
 extern int set_Parity(int fd,int databits,int stopbits,int parity);
 extern int OpenDev(char *Dev);
 extern void data_filter(char *databuf, SensorData *sd, int bufsize, int pksize);
