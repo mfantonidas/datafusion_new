@@ -1,6 +1,5 @@
 #include <malloc.h>
 #include "Sensors.h"
-#include "SerialComm.h"
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -15,6 +14,30 @@
 #include <stdio.h>
 
 static PSensorNode psensornode;
+static sensorData sensordata;
+
+void init_sensors()
+{
+    int i;
+
+    for(i = 0; i < 6; i++)
+    {
+        sensordata.data.sd.tempdata[i] = 0;
+        sensordata.data.md[i].tempdata = 0;
+        sensordata.data.sd.humidata[i] = 0;
+        sensordata.data.md[i].humidata = 0;
+        sensordata.sensorinfo[i].sensorID = 0;
+        sensordata.sensorinfo[i].isValiable = 0;
+        sensordata.sensorinfo[i].isAdded = 0;
+        sensordata.sensorCount = 0;
+        sensordata.datatype = UNSTARTED;
+    }
+}
+
+sensorData *get_sensordata()
+{
+    return &sensordata;
+}
 
 void create_sensor_list()
 {
@@ -32,12 +55,12 @@ void create_sensor_list()
     PSensorNode pstemp = NULL;
     NSensorNode *nsn = NULL;
 
-    fd = open_port(3);
+    /*fd = open_port(3);
     if(fd <= 0)
         return;
     if(set_opt(fd, 19200, 8, 'N', 1) <= 0)
         return;
-    printf("open sucessful!\n");
+        printf("open sucessful!\n");
 
     while(!ready)
     {
@@ -59,7 +82,9 @@ void create_sensor_list()
         usleep(100000);
     }
 
-    for(i = 0; i < count; ++i)
+    close(fd);*/
+
+    for(i = 0; i < 3/*count*/; ++i)
     {
         aSensor = (NSensor *)malloc(sizeof(NSensor));
 //        aSensor->name = (char *)malloc(sizeof(char)*20);

@@ -14,8 +14,18 @@ static int count = 0;
 static int TtyFd;
 static struct termios BackupTtyAttr;
 static char buffer[20];
+static char Char = 0;
+/*static int sensorID_s = 0;
+static int sensorID = 0;
+static int tempv_s = 0;
+static int tempv = 0, templ = 0;
+static int humiv_s = 0;
+static int humiv = 0, humil = 0;
+static int datacount_s = 0;
+static int datacountv = 0;
+staint templ_s = 0, humil_s = 0;*/
 
-static SensorData sensordata[6];
+//static SensorData sensordata[6];
 
 void *arg = NULL;
 
@@ -127,12 +137,13 @@ static int init_serial(SerialPort port, int speed)
         exit(1);
     }
     return 0;*/
+    printf("open tty success!\n");
 }
 
 void *thread0(void *arg)
 {
-    char Char = 0;
     char buffeer[20];
+    char stringbuffer[5];
     int sensorID_s = 0;
     int sensorID = 0;
     int tempv_s = 0;
@@ -143,6 +154,11 @@ void *thread0(void *arg)
     int datacountv = 0;
     int templ_s = 0, humil_s = 0;
     int i;
+    sensorData *sensordata;
+    DataFusionForm *dff = (DataFusionForm *)arg;
+
+    sensordata = get_sensordata();
+    printf("get sensordata\n");
 
     for (;;) {
 
@@ -159,6 +175,7 @@ void *thread0(void *arg)
         if (FD_ISSET(fd, &ReadSetFD)) {
             static int count1 = 0;
             static int read_ok = 0;
+            printf("readsetfd\n");
 
             while (read(fd, &Char, 1) == 1) {
                 static int count_t = 0, count_t_l = 0, count_h = 0, count_h_l = 0;
@@ -177,8 +194,6 @@ void *thread0(void *arg)
                     }
 
                 }
-
-
                 /*if (write(TtyFd, &Char, 1) < 0) {
                     Error(strerror(errno));
                     }*/
@@ -186,37 +201,84 @@ void *thread0(void *arg)
             }
             if(read_ok == 1)
             {
-                //printf ("\n\r%s\n", buffer);
-                for(i = 0; i < 20 && buffer[i] != 'x'; i++)
+                if(sensordata->datatype == UNSTARTED)
                 {
-                    if(buffer[i] == 'S')
-                        sensorID = buffer[i + 1] - 48;
-                    if(buffer[i] == 'T')
+                    for (i = 0; i < 7 && buffeer[i] != 'x'; ++i)
                     {
-                        datacountv = buffer[i + 1] - 48;
-                        templ = buffer[i + 3] - 48;
-                        if(templ == 0 || templ == 1)
-                            tempv = buffer[i + 4] - 48;
-                        else if(templ == 2)
-                            tempv = (buffer[i + 4] - 48)*10 + buffer[i + 5] - 48;
-                        else if(templ == 3)
-                            tempv = (buffer[i + 4] - 48)*100 + (buffer[i + 5] - 48)*10 + buffer[i + 6] - 48;
+                        if(buffeer[i] == 'a')
+                            if(buffeer[i + 1] == 'v')
+                            {
+                                printf("read av %c\n", buffeer[i + 2]);
+
+                                (sensordata->sensorinfo[(buffeer[i + 2] - 49)]).sensorID = buffeer[i + 2] - 48;
+                                (sensordata->sensorinfo[(buffeer[i + 2] - 49)]).isValiable = TRUE;
+                                printf("read av %d over\n", (sensordata->sensorinfo[0]).sensorID);
+
+                            }
                     }
-                    if(buffer[i] == 'H')
+                    for (i = 0; i < 4 && buffeer[i] != 'x'; ++i)
                     {
-                        humil = buffer[i + 3] - 48;
+                        if(buffeer[i] == 'i')
+                            if(buffeer[i + 1] == 'k')
+                                sensordata->info_read_ok = TRUE;
+                    }
+                    if(sensordata->info_read_ok == TRUE)
+                    {
+                        //printf("read state: %d\n", sensordata->info_read_ok);
+
+                        for(i = 0; i < 6; i++)
+                        {
+                            printf("read state: %d\n", sensordata->info_read_ok);
+                            printf("(sensordata->sensorinfo[%d]).isValiable == %s\n", i, (sensordata->sensorinfo[i]).isValiable == TRUE?"TRUE":"FALSE");
+
+
+                            if((sensordata->sensorinfo[i]).isValiable == TRUE)
+                            {
+                                printf("sensor:%d\n", sensordata->sensorinfo[i].sensorID);
+                                if(sensordata->sensorinfo[i].isAdded != TRUE)
+                                {
+                                    itoa((sensordata->sensorinfo[i]).sensorID, stringbuffer);
+                                    dff->ListBoxSensors->insertItem(QString("sensor")+QString(stringbuffer));
+                                    (sensordata->sensorinfo[i]).isAdded = TRUE;
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+                printf ("\n\r%s\n", buffeer);
+                for(i = 0; i < 20 && buffeer[i] != 'x'; i++)
+                {
+                    if(buffeer[i] == 'S')
+                        sensorID = buffeer[i + 1] - 48;
+                    if(buffeer[i] == 'T')
+                    {
+                        datacountv = buffeer[i + 1] - 48;
+                        templ = buffeer[i + 3] - 48;
+                        if(templ == 0 || templ == 1)
+                            tempv = buffeer[i + 4] - 48;
+                        else if(templ == 2)
+                            tempv = (buffeer[i + 4] - 48)*10 + buffeer[i + 5] - 48;
+                        else if(templ == 3)
+                            tempv = (buffeer[i + 4] - 48)*100 + (buffeer[i + 5] - 48)*10 + buffeer[i + 6] - 48;
+                    }
+                    if(buffeer[i] == 'H')
+                    {
+                        humil = buffeer[i + 3] - 48;
                         if(humil == 0 || humil == 1)
-                            humiv = buffer[i + 4] - 48;
+                            humiv = buffeer[i + 4] - 48;
                         else if(humil == 2)
-                            humiv = (buffer[i + 4] - 48)*10 + buffer[i + 5] - 48;
+                            humiv = (buffeer[i + 4] - 48)*10 + buffeer[i + 5] - 48;
                         else if(humil == 3)
-                            humiv = (buffer[i + 4] - 48)*100 + (buffer[i + 5] - 48)*10 + buffer[i + 6] - 48;
+                            humiv = (buffeer[i + 4] - 48)*100 + (buffeer[i + 5] - 48)*10 + buffeer[i + 6] - 48;
                     }
                 }
-                printf("\n\rsensorID:%d,templ:%d,tempv:%d,humil:%d,humiv:%d,count:%d", sensorID, templ,tempv,humil, humiv, datacountv);
+                if(sensordata->datatype == SINGLE_MODE)
+                    printf("\n\rsensorID:%d,templ:%d,tempv:%d,humil:%d,humiv:%d,count:%d", sensorID, templ,tempv,humil, humiv, datacountv);
 
-                memset(buffer, 0, sizeof(buffer));
-                buffer[0] = '\0';
+                memset(buffeer, 0, sizeof(buffeer));
+                buffeer[0] = '\0';
                 read_ok = 0;
             }
 
@@ -225,6 +287,8 @@ void *thread0(void *arg)
             while (read(TtyFd, &Char, 1) == 1) {
                 static int EscKeyCount = 0;
                 WaitFdWriteable(fd);
+                printf("%c\n", Char);
+
                 if (write(fd, &Char, 1) < 0) {
                     perror(strerror(errno));
                 }
@@ -280,7 +344,7 @@ ExitLabel:
         }*/
 }
 
-void *thread1(void *arg)
+/*void *thread1(void *arg)
 {
     int i;
     char *buf = (char *)arg;
@@ -314,7 +378,7 @@ void *thread1(void *arg)
         //pthread_mutex_unlock(&buff_lock);
 
     }
-}
+    }*/
 
 void init_pipe()
 {
@@ -350,14 +414,19 @@ DataFusionBaseForm(parent, name, fl)
     connect(RadioButtonOne, SIGNAL(clicked()), this, SLOT(mode_change()));
     connect(RadioButtonMany, SIGNAL(clicked()), this, SLOT(mode_change()));
     connect(PushButtonChooseS, SIGNAL(clicked()), this, SLOT(sensor_choose_ok()));
+    connect(PushButtonFresh, SIGNAL(clicked()), this, SLOT(sensor_fresh()));
 
     PushButtonChooseS->setDisabled(true);
     create_sensor_list();
-    s = get_sensor_list();
+    /*s = get_sensor_list();
     if(s)
-        printf("%s\n", s->node->name);
+    printf("%s\n", s->node->name);*/
 
-    for(s; s!=0; )
+    init_sensors();
+
+    sensordata = get_sensordata();
+
+    /*for(s; s!=0; )
     {
         if (s->node->avalible == 1)
         {
@@ -367,17 +436,18 @@ DataFusionBaseForm(parent, name, fl)
         }
         s = s->next;
     }
-    s = NULL;
+    s = NULL;*/
 
-    pthread_mutex_init(&buff_lock, NULL);
+    //pthread_mutex_init(&buff_lock, NULL);
 
-    sdsize = sizeof(sensordata)/sizeof(SensorData);
+    //sdsize = sizeof(sensordata)/sizeof(SensorData);
+
     notEmpty = 0;
 
     init_serial(TTYUSB0, 19200);
     init_pipe();
 
-    ::pthread_create(&thread[0], NULL, thread0, (void *)arg);
+    ::pthread_create(&thread[0], NULL, thread0, (void *)this);
 //    ::pthread_create(&thread[1], NULL, thread1, (void *)arg);
     /*
     if(thread[0] !=0) {                   //comment4
@@ -398,6 +468,8 @@ DataFusionForm::~DataFusionForm()
     lcdtimer->stop();
     //serialtimer->stop();
     del_sensor_list();
+    if (tcsetattr(TtyFd, TCSANOW, &BackupTtyAttr) < 0)
+        perror("Unable to set tty");
 }
 
 void DataFusionForm::paint()
@@ -570,6 +642,11 @@ void DataFusionForm::sensor_choose_ok()
             break;
         }
     }
+}
+
+void DataFusionForm::sensor_fresh()
+{
+
 }
 
 tabGraph::tabGraph(QWidget *parent):

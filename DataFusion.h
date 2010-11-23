@@ -18,7 +18,6 @@
 #include <pthread.h>
 #include "serial.h"
 //#include <QLine>
-
 class PixTemp;
 class PixHumi;
 class tabPic;
@@ -46,7 +45,7 @@ static char buffr[512];
 static int pipe_size;
 static pthread_mutex_t buff_lock;
 
-//static int init_serial(SerialPort port);
+ //static int init_serial(SerialPort port);
 
 class DataFusionForm:public DataFusionBaseForm
 {
@@ -62,9 +61,12 @@ private:
     int isSingle;
     int isAbnormal;
     int singleSensor[3];
+    dataType datatype;
     pid_t fock_fd;
     PSensorNode s;
+    sensorData *sensordata;
     pthread_t thread[2];
+
     //pthread_mutex_t buff_lock;
 
     virtual void check_radio();
@@ -76,6 +78,7 @@ public slots:
     virtual void serial_catch();
     virtual void mode_change();
     virtual void sensor_choose_ok();
+    virtual void sensor_fresh();
 
 protected:
 //  void paintEvent(QPaintEvent *event);

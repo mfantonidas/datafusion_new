@@ -14,6 +14,6 @@ export QPEDIR=$PWD
 export KDEDIR=$PWD/../kde
 
 sleep 3
-/micro2440/x86-qtopia/datafusion_new/DataFusion -qws
+/opt/FriendlyARM/mini2440/x86-qtopia/datafusion_new_bak/DataFusion -qws
 
 

@@ -18,6 +18,10 @@
 #define FALSE 0
 #define TRUE 1
 
+static int fd;
+static char databuf[255];
+static NsensorData sensordata[3];
+
 int open_port(int port)
 {
     /*
@@ -140,6 +144,45 @@ int set_opt(int fd, int nSpeed, int nBits, char nEvent, int nStop)
         return 0;
 
     return 1;
+}
+
+int read_sensor()
+{
+    int res;
+    int i, count;
+
+    res = read(fd, databuf, 255);
+    if(res)
+    {
+        databuf[res] = '\n';
+        for(i = 0; i < res;)
+        {
+            if(databuf[i] == 'S')
+            {
+                count = databuf[i + 1] - 48;
+                sensordata[count - 1].num = count;
+                for(i; i < res;)
+                {
+                    if(databuf[i] == 'T')
+                    {
+                        sensordata[count - 1].temperture = (databuf[i + 1] - 48) * 10 + databuf[i + 2] - 48;
+                        for(i; i < res;)
+                        {
+                            if(databuf[i] == 'H')
+                            {
+                                sensordata[count - 1].humidity = (databuf[i + 1] - 48) * 10 + databuf[i + 2] - 48;
+                                break;
+                            }
+                            i++;
+                        }
+                        break;
+                    }
+                    i++;
+                }
+            }
+            i++;
+        }
+    }
 }
 
 /*int SensorReader::init_sensor_reader(int port)

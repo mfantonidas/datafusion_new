@@ -13,11 +13,11 @@
 #define TRUE 1
 #define FALSE 0
 
-typedef struct{
+/*typedef struct{
     int temperture;
     int humidity;
     int sensorID;
-}SensorData;
+    }SensorData;*/
 
 typedef enum{ TTYS0, TTYS1, TTYSAC0, TTYSAC1, TTYUSB0, TTYUSB1 }SerialPort;
 
@@ -29,7 +29,7 @@ static int name_arr[] = { 38400, 19200, 9600, 4800, 2400, 1200, 300,
 extern int get_speed(int speed);
 extern int set_Parity(int fd,int databits,int stopbits,int parity);
 extern int OpenDev(char *Dev);
-extern void data_filter(char *databuf, SensorData *sd, int bufsize, int pksize);
+//extern void data_filter(char *databuf, SensorData *sd, int bufsize, int pksize);
 //int init_serial(SerialPort port);
 
 #endif //SERIAL_H
