@@ -6,7 +6,9 @@
 #include <qlabel.h>
 #include <qtabwidget.h>
 #include <qtimer.h>
+#include <qfont.h>
 #include <math.h>
+#include <unistd.h>
 #include <qlcdnumber.h>
 #include <qradiobutton.h>
 #include <qlistbox.h>
@@ -17,21 +19,26 @@
 #include <qlineedit.h>
 #include <pthread.h>
 #include "serial.h"
+#include "Fusion_module.h"
 //#include <QLine>
 class PixTemp;
 class PixHumi;
 class tabPic;
 class tabGraph;
 
+static int temptest[140];
+static int humitest[140];
 static int tempbuffer1[200];
 static int tempbuffer2[200];
 static int tempbuffer3[200];
-static int tempbufferF[200];
+static int tempbufferF[140];
 static int humibuffer1[200];
 static int humibuffer2[200];
 static int humibuffer3[200];
-static int humibufferF[200];
+static int humibufferF[140];
 static int isStart;
+static int SCREEN_WITTH;
+static int SCREEN_HIGHT;
 static char databuf[255];
 static int isReady = 0;
 static int fd, pipe_fd[2];
@@ -41,9 +48,14 @@ static int sdsize;
 static int notEmpty = 0;
 static char buff[512];
 static char buffr[512];
+static float fusion_result;
+static float init_data[6] = {0, 0, 0, 0, 0, 0};
 //static SensorData sensordata[6] ;
 static int pipe_size;
+//static sensorData *sensordata;
 static pthread_mutex_t buff_lock;
+static psingle_data sds_t = NULL;
+static psingle_data sds_h = NULL;
 
  //static int init_serial(SerialPort port);
 
@@ -56,7 +68,7 @@ public:
     tabGraph *tabpic;
 private:
     QTimer *lcdtimer;
-    //QTimer *serialtimer;
+    QTimer *serialtimer;
     int isAuto;
     int isSingle;
     int isAbnormal;
@@ -64,9 +76,7 @@ private:
     dataType datatype;
     pid_t fock_fd;
     PSensorNode s;
-    sensorData *sensordata;
     pthread_t thread[2];
-
     //pthread_mutex_t buff_lock;
 
     virtual void check_radio();
