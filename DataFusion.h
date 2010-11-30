@@ -89,6 +89,7 @@ public slots:
     virtual void mode_change();
     virtual void sensor_choose_ok();
     virtual void sensor_fresh();
+    virtual void sys_exit();
 
 protected:
 //  void paintEvent(QPaintEvent *event);

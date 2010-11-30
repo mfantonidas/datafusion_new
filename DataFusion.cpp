@@ -447,10 +447,13 @@ DataFusionBaseForm(parent, name, fl)
     char buffer[5];
     QString qs;
 
+    //setWindowState(Qt::WindowFullScreen);
+    this->showFullScreen();
     tabpic = new tabGraph(this);
     TabWidget2->addTab(tabpic, tr("Graph"));
     connect(PushButtonStart, SIGNAL(clicked()), this, SLOT(start_catch()));
     connect(PushButtonStop, SIGNAL(clicked()), this, SLOT(stop_catch()));
+    connect(PushButtonExit, SIGNAL(clicked()), this, SLOT(sys_exit()));
     lcdtimer = new QTimer(this, "lcdtimer");
     serialtimer = new QTimer(this, "serialtimer");
     connect(lcdtimer, SIGNAL(timeout()), this, SLOT(lcd_show()));
@@ -529,6 +532,11 @@ DataFusionForm::~DataFusionForm()
     del_sensor_list();
     /*if (tcsetattr(TtyFd, TCSANOW, &BackupTtyAttr) < 0)
       perror("Unable to set tty");*/
+}
+
+void DataFusionForm::sys_exit()
+{
+    this->close();
 }
 
 void DataFusionForm::paint()

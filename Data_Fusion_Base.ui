@@ -287,60 +287,6 @@
                 </property>
             </widget>
             <widget>
-                <class>QPushButton</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>PushButtonStart</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>20</x>
-                        <y>240</y>
-                        <width>91</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-                <property stdset="1">
-                    <name>font</name>
-                    <font>
-                        <family>helvetica</family>
-                        <pointsize>10</pointsize>
-                    </font>
-                </property>
-                <property stdset="1">
-                    <name>text</name>
-                    <string>Start</string>
-                </property>
-            </widget>
-            <widget>
-                <class>QPushButton</class>
-                <property stdset="1">
-                    <name>name</name>
-                    <cstring>PushButtonStop</cstring>
-                </property>
-                <property stdset="1">
-                    <name>geometry</name>
-                    <rect>
-                        <x>120</x>
-                        <y>240</y>
-                        <width>91</width>
-                        <height>20</height>
-                    </rect>
-                </property>
-                <property stdset="1">
-                    <name>font</name>
-                    <font>
-                        <family>helvetica</family>
-                        <pointsize>10</pointsize>
-                    </font>
-                </property>
-                <property stdset="1">
-                    <name>text</name>
-                    <string>Stop</string>
-                </property>
-            </widget>
-            <widget>
                 <class>QLabel</class>
                 <property stdset="1">
                     <name>name</name>
@@ -365,6 +311,80 @@
                 <property stdset="1">
                     <name>text</name>
                     <string>Choose sensor:</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QPushButton</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>PushButtonStop</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>80</x>
+                        <y>240</y>
+                        <width>70</width>
+                        <height>30</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>font</name>
+                    <font>
+                        <family>helvetica</family>
+                        <pointsize>10</pointsize>
+                    </font>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Stop</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QPushButton</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>PushButtonStart</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>11</x>
+                        <y>240</y>
+                        <width>70</width>
+                        <height>30</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>font</name>
+                    <font>
+                        <family>helvetica</family>
+                        <pointsize>10</pointsize>
+                    </font>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Start</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QPushButton</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>PushButtonExit</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>150</x>
+                        <y>240</y>
+                        <width>70</width>
+                        <height>30</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Exit</string>
                 </property>
             </widget>
         </widget>
